@@ -1,18 +1,42 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-function Register({ onLogin }) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+interface RegisterProps {
+  onLogin: () => void;
+}
+
+// Simulated in-memory user database
+const users: Array<{ name: string; email: string; password: string }> = [
+  { name: 'John Doe', email: 'john@example.com', password: 'password123' },
+  { name: 'Jane Smith', email: 'jane@example.com', password: 'password456' },
+];
+
+const Register: React.FC<RegisterProps> = ({ onLogin }) => {
+  const [name, setName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
     // Here you would typically make an API call to register the user
-    console.log('Registration attempt:', name, email, password);
-    onLogin(); // Automatically log in the user after successful registration
-    navigate('/dashboard'); // Navigate to dashboard after successful registration
+    //console.log('Registration attempt:', name, email, password);
+
+    // Check if the email is already registered
+    const userExists = users.some(user => user.email === email);
+
+    if (userExists) {
+      alert('Email is already registered. Please use a different email or log in.');
+    } else {
+      // Register the user by adding them to the dummy database
+      users.push({ name, email, password });
+      console.log('Registration successful:', name, email);
+
+
+      onLogin(); // Automatically log in the user after successful registration
+      navigate('/dashboard'); // Navigate to dashboard after successful registration
+    }
   };
 
   return (

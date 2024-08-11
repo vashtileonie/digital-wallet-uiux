@@ -1,17 +1,31 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-function Login({ onLogin }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+interface LoginProps {
+  onLogin: () => void;
+}
+
+const Login: React.FC<LoginProps> = ({ onLogin }) => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  // Define dummy user credentials
+  const dummyEmail = 'john@example.com';
+  const dummyPassword = 'password123';
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Here you would typically make an API call to verify credentials
-    console.log('Login attempt:', email, password);
-    onLogin(); // Call the onLogin function passed from App.js
-    navigate('/dashboard'); // Navigate to dashboard after successful login
+
+    // Simple dummy validation
+    if (email === dummyEmail && password === dummyPassword) {
+      console.log('Login successful:', email);
+      onLogin(); // Call the onLogin function passed from App.js
+      navigate('/dashboard'); // Navigate to dashboard after successful login
+    } else {
+      console.log('Login failed: Invalid credentials');
+      alert('Invalid email or password.'); // Show an alert or handle error as needed
+    }
   };
 
   return (
