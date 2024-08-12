@@ -9,8 +9,13 @@ import SettingsView from './views/SettingsView';
 import AccountManagement from './AccountManagement';
 import StorePurchase from './StorePurchase';
 
-function Dashboard({ onLogout }) {
-  const [activeTab, setActiveTab] = useState('home');
+interface DashboardProps {
+  onLogout: () => void;
+}
+
+function Dashboard({ onLogout }: DashboardProps) {
+  const [activeTab, setActiveTab] = useState<string>('home');
+  const [darkMode, setDarkMode] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const sidebarLinks = [
@@ -23,45 +28,58 @@ function Dashboard({ onLogout }) {
     { icon: <Settings />, label: 'Settings', key: 'settings' },
   ];
 
-  const handleTabChange = (key) => {
+  const handleTabChange = (key: string) => {
     setActiveTab(key);
     navigate(key);
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className="w-64 bg-white shadow-md">
-        <div className="p-4">
-          <h1 className="text-2xl font-bold text-blue-600">DigiWallet</h1>
-        </div>
-        <nav className="mt-6">
-          {sidebarLinks.map((link) => (
-            <button
-              key={link.key}
-              className={`flex items-center w-full py-2 px-4 ${
-                activeTab === link.key ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-100'
-              }`}
-              onClick={() => handleTabChange(link.key)}
-            >
-              {React.cloneElement(link.icon, { size: 18, className: 'mr-2' })}
-              {link.label}
-            </button>
-          ))}
-        </nav>
-        <div className="absolute bottom-0 w-64 p-4">
-          <button className="flex items-center text-gray-600 hover:text-red-500" onClick={onLogout}>
-            <LogOut className="mr-2" size={18} />
-            Logout
-          </button>
-        </div>
+    <div className={`flex h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
+    {/* Sidebar */}
+    <div className={`w-64 ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-md`}>
+      <div className="p-4">
+        <h1 className="text-2xl font-bold text-blue-600">DigiWallet</h1>
       </div>
+      <nav className="mt-6">
+        {sidebarLinks.map((link) => (
+          <button
+            key={link.key}
+            className={`flex items-center w-full py-2 px-4 ${
+              activeTab === link.key ? 'bg-blue-100 text-blue-600' : (darkMode ? 'text-gray-300 hover:bg-blue-500' : 'text-gray-600 hover:bg-blue-200')
+            }`}
+            onClick={() => handleTabChange(link.key)}
+          >
+            {React.cloneElement(link.icon, { size: 18, className: 'mr-2' })}
+            {link.label}
+          </button>
+        ))}
+      </nav>
+      <div className="absolute bottom-0 w-64 p-4">
+        <button
+          className={`w-full py-2 px-4 rounded ${
+            darkMode ? 'bg-gray-700 text-white mb-6' : 'bg-gray-200 text-gray-900 mb-6'
+          } hover:bg-lightblue-500`}
+          onClick={toggleDarkMode}
+        >
+          {darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        </button>
+        <button className="flex items-center text-gray-600 hover:text-red-500" onClick={onLogout}>
+          <LogOut className="mr-2" size={18} />
+          Logout
+        </button>
+      </div>
+    </div>
+
 
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto">
-        <header className="bg-white shadow-sm">
+        <header className={`${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
           <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-            <h1 className="text-2xl font-semibold text-gray-900">{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}</h1>
+            <h1 className="text-2xl font-semibold">{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}</h1>
           </div>
         </header>
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">

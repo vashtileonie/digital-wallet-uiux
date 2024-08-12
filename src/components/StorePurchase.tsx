@@ -1,76 +1,80 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, KeyboardEvent } from 'react';
 import { CreditCard, QrCode, X } from 'lucide-react';
 
+type ScanningMode = 'store' | 'item' | null;
+
+interface Store {
+  id: number;
+  name: string;
+  distance: string;
+}
+
+interface Item {
+  id: number;
+  name: string;
+  price: number;
+}
+
 const StorePurchase = () => {
-  const [scanningMode, setScanningMode] = useState(null); // 'store' or 'item'
-  const [selectedStore, setSelectedStore] = useState(null);
-  const [cart, setCart] = useState([]);
-  const [total, setTotal] = useState(0);
+  const [scanningMode, setScanningMode] = useState<ScanningMode>(null);
+  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [cart, setCart] = useState<Item[]>([]);
+  const [total, setTotal] = useState<number>(0);
 
   // Simulated database of QR codes
-  const qrCodes = {
+  const qrCodes: Record<string, Store | Item> = {
     store123: { id: 1, name: 'Grocery Store', distance: '0.5 miles' },
     store456: { id: 2, name: 'Electronics Shop', distance: '1.2 miles' },
     item789: { id: 1, name: 'Milk', price: 3.99 },
     itemABC: { id: 2, name: 'Bread', price: 2.49 },
   };
 
-  const startScanning = (mode) => {
+  const startScanning = (mode: ScanningMode) => {
     setScanningMode(mode);
   };
 
-  const handleScan = (qrCode) => {
-    if (scanningMode === 'store') {
-      const store = qrCodes[qrCode];
-      if (store) {
-        setSelectedStore(store);
-        setScanningMode(null);
-      } else {
-        alert('Invalid store QR code');
-      }
-    } else if (scanningMode === 'item') {
-      const item = qrCodes[qrCode];
-      if (item) {
-        addToCart(item);
-        setScanningMode(null);
-      } else {
-        alert('Invalid item QR code');
-      }
+  const handleScan = (qrCode: string) => {
+    const scannedData = qrCodes[qrCode];
+    if (scanningMode === 'store' && scannedData && 'distance' in scannedData) {
+      setSelectedStore(scannedData);
+      setScanningMode(null);
+    } else if (scanningMode === 'item' && scannedData && 'price' in scannedData) {
+      addToCart(scannedData);
+      setScanningMode(null);
+    } else {
+      alert('Invalid QR code');
     }
   };
 
-  const addToCart = (item) => {
-    setCart([...cart, item]);
-    setTotal(total + item.price);
+  const addToCart = (item: Item) => {
+    setCart(prevCart => [...prevCart, item]);
+    setTotal(prevTotal => prevTotal + item.price);
   };
 
-  const removeFromCart = (item) => {
-    const newCart = cart.filter(i => i.id !== item.id);
-    setCart(newCart);
-    setTotal(total - item.price);
+  const removeFromCart = (item: Item) => {
+    setCart(prevCart => prevCart.filter(i => i.id !== item.id));
+    setTotal(prevTotal => prevTotal - item.price);
   };
 
   const processPayment = () => {
-    // In a real app, this would integrate with a payment gateway
     alert(`Payment of $${total.toFixed(2)} processed successfully!`);
-    // Here you would typically call an API to record the transaction
     setCart([]);
     setTotal(0);
     setSelectedStore(null);
   };
 
   // Simulated QR code scanner
-  const QRScanner = ({ onScan }) => (
+  const QRScanner = ({ onScan }: { onScan: (qrCode: string) => void }) => (
     <div className="bg-gray-200 p-4 rounded-lg text-center">
       <p className="mb-2">Scanning QR Code...</p>
       <input 
         type="text" 
         placeholder="Enter QR code" 
         className="p-2 border rounded"
-        onKeyPress={(e) => {
+        onKeyPress={(e: KeyboardEvent<HTMLInputElement>) => {
           if (e.key === 'Enter') {
-            onScan(e.target.value);
-            e.target.value = '';
+            onScan((e.target as HTMLInputElement).value);
+            (e.target as HTMLInputElement).value = '';
           }
         }}
       />
