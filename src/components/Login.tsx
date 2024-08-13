@@ -32,7 +32,7 @@ function Login({ onLogin }: LoginProps) {
 
   return (
     <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-dark-mode' : 'bg-light-mode'}`}>
-      <div className={`p-8 rounded shadow-md w-96 ${darkMode ? 'bg-card-dark-mode text-dark-mode' : 'bg-card-light-mode text-light-mode'}`}>
+      <div className={`p-6 md:p-8 lg:p-10 xl:p-12 rounded shadow-md w-full max-w-md ${darkMode ? 'bg-card-dark-mode text-dark-mode' : 'bg-card-light-mode text-light-mode'}`}>
         <div className="absolute top-4 right-4 flex items-center">
           <button 
             onClick={() => setDarkMode(!darkMode)}
@@ -44,7 +44,7 @@ function Login({ onLogin }: LoginProps) {
             <span className="ml-2">{darkMode ? <MoonIcon className="w-6 h-6 text-gray-900" /> : <SunIcon className="w-6 h-6 text-yellow-600" />}</span>
           </button>
         </div>
-        <h2 className="text-2xl font-bold mb-4">Login to DigiWallet</h2>
+        <h2 className="text-xl md:text-2xl font-bold mb-4">Login to DigiWallet</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium">Email</label>
@@ -72,7 +72,7 @@ function Login({ onLogin }: LoginProps) {
             Log In
           </button>
         </form>
-        <p className="mt-4 text-center">
+        <p className="mt-4 text-center text-sm md:text-base">
           Don't have an account? <Link to="/register" className={`text-blue-600 hover:underline ${darkMode ? 'text-blue-400' : ''}`}>Register here</Link>
         </p>
       </div>
