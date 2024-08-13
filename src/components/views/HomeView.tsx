@@ -3,6 +3,7 @@ import { ArrowUpRight, ArrowDownLeft, Wallet } from 'lucide-react';
 
 function HomeView() {
   const [balance, setBalance] = useState<number>(5000);
+  const [darkMode, setDarkMode] = useState<boolean>(false); // Assuming you are tracking dark mode state
 
   const handleSendMoney = () => {
     const amount = parseFloat(prompt("Enter amount to send:") || '');
@@ -35,15 +36,15 @@ function HomeView() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div className="bg-white overflow-hidden shadow rounded-lg">
+      <div className={`${darkMode ? 'bg-gray-800 text-gray-400' : 'bg-white text-gray-900'} overflow-hidden shadow rounded-lg`}>
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Total Balance</h3>
-          <p className="text-3xl text-gray-900 font-bold">${balance.toFixed(2)}</p>
+          <h3 className="text-lg font-medium mb-4">Total Balance</h3>
+          <p className="text-3xl font-bold">${balance.toFixed(2)}</p>
         </div>
       </div>
-      <div className="bg-white overflow-hidden shadow rounded-lg">
+      <div className={`${darkMode ? 'bg-gray-800 text-gray-400' : 'bg-white text-gray-900'} overflow-hidden shadow rounded-lg`}>
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+          <h3 className="text-lg font-medium mb-4">Quick Actions</h3>
           <div className="space-y-2">
             <button onClick={handleSendMoney} className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200 flex items-center justify-center">
               <ArrowUpRight className="mr-2" size={18} />

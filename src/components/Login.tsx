@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+//import { SunIcon, MoonIcon } from '@heroicons/react/24/solid'; 
 
 interface LoginProps {
   onLogin: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onLogin }) => {
+function Login({ onLogin }: LoginProps) {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [darkMode, setDarkMode] = useState<boolean>(false); // State for dark mode
   const navigate = useNavigate();
 
   // Define dummy user credentials
@@ -29,38 +31,49 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-96">
+    <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-dark-mode' : 'bg-light-mode'}`}>
+      <div className={`p-8 rounded shadow-md w-96 ${darkMode ? 'bg-card-dark-mode text-dark-mode' : 'bg-card-light-mode text-light-mode'}`}>
+        <div className="absolute top-4 right-4 flex items-center">
+          <button 
+            onClick={() => setDarkMode(!darkMode)}
+            className={`flex items-center p-2 rounded-full shadow-lg ${darkMode ? 'bg-yellow-400' : 'bg-gray-300'} transition-colors duration-300`}
+          >
+            <div className={`w-10 h-6 flex items-center ${darkMode ? 'justify-end' : 'justify-start'} bg-gray-200 rounded-full p-1`}>
+              <div className={`w-6 h-6 rounded-full ${darkMode ? 'bg-gray-800' : 'bg-yellow-500'} shadow-md`} />
+            </div>
+          
+          </button>
+        </div>
         <h2 className="text-2xl font-bold mb-4">Login to DigiWallet</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+            <label htmlFor="email" className="block text-sm font-medium">Email</label>
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+              className={`mt-1 block w-full border ${darkMode ? 'border-gray-600 bg-gray-700 text-gray-300' : 'border-gray-300 bg-white text-gray-900'} rounded-md shadow-sm p-2`}
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+            <label htmlFor="password" className="block text-sm font-medium">Password</label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+              className={`mt-1 block w-full border ${darkMode ? 'border-gray-600 bg-gray-700 text-gray-300' : 'border-gray-300 bg-white text-gray-900'} rounded-md shadow-sm p-2`}
             />
           </div>
-          <button type="submit" className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200">
+          <button type="submit" className={`w-full py-2 px-4 rounded transition duration-200 ${darkMode ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-600 hover:bg-blue-700'} text-white`}>
             Log In
           </button>
         </form>
         <p className="mt-4 text-center">
-          Don't have an account? <Link to="/register" className="text-blue-600 hover:underline">Register here</Link>
+          Don't have an account? <Link to="/register" className={`text-blue-600 hover:underline ${darkMode ? 'text-blue-400' : ''}`}>Register here</Link>
         </p>
       </div>
     </div>
