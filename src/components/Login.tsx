@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-//import { SunIcon, MoonIcon } from '@heroicons/react/24/solid'; 
+import { SunIcon, MoonIcon } from '@heroicons/react/24/solid'; 
 
 interface LoginProps {
   onLogin: () => void;
@@ -41,7 +41,7 @@ function Login({ onLogin }: LoginProps) {
             <div className={`w-10 h-6 flex items-center ${darkMode ? 'justify-end' : 'justify-start'} bg-gray-200 rounded-full p-1`}>
               <div className={`w-6 h-6 rounded-full ${darkMode ? 'bg-gray-800' : 'bg-yellow-500'} shadow-md`} />
             </div>
-          
+            <span className="ml-2">{darkMode ? <MoonIcon className="w-6 h-6 text-gray-900" /> : <SunIcon className="w-6 h-6 text-yellow-600" />}</span>
           </button>
         </div>
         <h2 className="text-2xl font-bold mb-4">Login to DigiWallet</h2>
