@@ -1,7 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { PlusCircle, CreditCard, Building, Trash2 } from "lucide-react";
 
-// Define the types for your state
 interface Account {
   id: number;
   type: "Checking" | "Savings";
@@ -22,7 +21,11 @@ interface PaymentMethod {
   expiryDate: string;
 }
 
-const AccountManagement = () => {
+interface AccountManagementProps {
+  darkMode: boolean;
+}
+
+const AccountManagement: React.FC<AccountManagementProps> = ({ darkMode }) => {
   const [accounts, setAccounts] = useState<Account[]>([
     { id: 1, type: "Checking", name: "Main Checking", balance: 5000 },
     { id: 2, type: "Savings", name: "Emergency Fund", balance: 10000 },
@@ -37,9 +40,7 @@ const AccountManagement = () => {
   ]);
 
   const [newAccountName, setNewAccountName] = useState<string>("");
-  const [newAccountType, setNewAccountType] = useState<"Checking" | "Savings">(
-    "Checking"
-  );
+  const [newAccountType, setNewAccountType] = useState<"Checking" | "Savings">("Checking");
   const [newBankName, setNewBankName] = useState<string>("");
   const [newBankAccountNumber, setNewBankAccountNumber] = useState<string>("");
   const [newCardNumber, setNewCardNumber] = useState<string>("");
@@ -110,31 +111,31 @@ const AccountManagement = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div className={`space-y-6 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+      <div className={`shadow overflow-hidden sm:rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
         <div className="px-4 py-5 sm:px-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
+          <h3 className={`text-lg leading-6 font-medium ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
             Your Accounts
           </h3>
         </div>
-        <div className="border-t border-gray-200">
-          <ul className="divide-y divide-gray-200">
+        <div className={`border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+          <ul className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
             {accounts.map((account) => (
-              <li key={account.id} className="px-4 py-4 sm:px-6">
+              <li key={account.id} className={`px-4 py-4 sm:px-6 ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-900'}`}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-indigo-600 truncate">
+                    <p className={`text-sm font-medium ${darkMode ? 'text-indigo-400' : 'text-indigo-600'} truncate`}>
                       {account.name}
                     </p>
-                    <p className="text-sm text-gray-500">{account.type}</p>
+                    <p className="text-sm">{account.type}</p>
                   </div>
                   <div className="flex items-center">
-                    <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    <p className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${darkMode ? 'bg-green-900 text-green-400' : 'bg-green-100 text-green-800'}`}>
                       ${account.balance.toFixed(2)}
                     </p>
                     <button
                       onClick={() => handleRemoveAccount(account.id)}
-                      className="ml-2 text-red-600 hover:text-red-900"
+                      className={`ml-2 ${darkMode ? 'text-red-400 hover:text-red-300' : 'text-red-600 hover:text-red-900'}`}
                     >
                       <Trash2 size={18} />
                     </button>
@@ -156,21 +157,21 @@ const AccountManagement = () => {
                 setNewAccountName(e.target.value)
               }
               placeholder="Account Name"
-              className="flex-grow shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm border-gray-300 rounded-md"
+              className={`flex-grow shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
             />
             <select
               value={newAccountType}
               onChange={(e: ChangeEvent<HTMLSelectElement>) =>
                 setNewAccountType(e.target.value as "Checking" | "Savings")
               }
-              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm border-gray-300 rounded-md"
+              className={`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
             >
               <option value="Checking">Checking</option>
               <option value="Savings">Savings</option>
             </select>
             <button
               type="submit"
-              className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${darkMode ? 'text-gray-900 bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500' : 'text-white bg-indigo-600 hover:bg-indigo-700'} focus:outline-none focus:ring-2 focus:ring-offset-2`}
             >
               <PlusCircle size={18} className="mr-2" />
               Add Account
@@ -179,28 +180,28 @@ const AccountManagement = () => {
         </div>
       </div>
 
-      <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+      <div className={`shadow overflow-hidden sm:rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
         <div className="px-4 py-5 sm:px-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
+          <h3 className={`text-lg leading-6 font-medium ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
             Linked Bank Accounts
           </h3>
         </div>
-        <div className="border-t border-gray-200">
-          <ul className="divide-y divide-gray-200">
+        <div className={`border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+          <ul className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
             {linkedBanks.map((bank) => (
-              <li key={bank.id} className="px-4 py-4 sm:px-6">
+              <li key={bank.id} className={`px-4 py-4 sm:px-6 ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-900'}`}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-indigo-600 truncate">
+                    <p className={`text-sm font-medium ${darkMode ? 'text-indigo-400' : 'text-indigo-600'} truncate`}>
                       {bank.name}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm">
                       Account: {bank.accountNumber}
                     </p>
                   </div>
                   <button
                     onClick={() => handleRemoveBank(bank.id)}
-                    className="text-red-600 hover:text-red-900"
+                    className={`text-red-600 hover:text-red-900 ${darkMode ? 'text-red-400 hover:text-red-300' : ''}`}
                   >
                     <Trash2 size={18} />
                   </button>
@@ -221,7 +222,7 @@ const AccountManagement = () => {
                 setNewBankName(e.target.value)
               }
               placeholder="Bank Name"
-              className="flex-grow shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm border-gray-300 rounded-md"
+              className={`flex-grow shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
             />
             <input
               type="text"
@@ -230,49 +231,41 @@ const AccountManagement = () => {
                 setNewBankAccountNumber(e.target.value)
               }
               placeholder="Account Number"
-              className="flex-grow shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm border-gray-300 rounded-md"
+              className={`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
             />
             <button
               type="submit"
-              className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${darkMode ? 'text-gray-900 bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500' : 'text-white bg-indigo-600 hover:bg-indigo-700'} focus:outline-none focus:ring-2 focus:ring-offset-2`}
             >
-              <Building size={18} className="mr-2" />
+              <PlusCircle size={18} className="mr-2" />
               Link Bank
             </button>
           </form>
         </div>
       </div>
 
-      <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+      <div className={`shadow overflow-hidden sm:rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
         <div className="px-4 py-5 sm:px-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
+          <h3 className={`text-lg leading-6 font-medium ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
             Payment Methods
           </h3>
         </div>
-        <div className="border-t border-gray-200">
-          <ul className="divide-y divide-gray-200">
+        <div className={`border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+          <ul className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
             {paymentMethods.map((method) => (
-              <li
-                key={method.id}
-                className="px-4 py-4 sm
-"
-              >
+              <li key={method.id} className={`px-4 py-4 sm:px-6 ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-900'}`}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-indigo-600 truncate">
-                      {method.type}
+                    <p className={`text-sm font-medium ${darkMode ? 'text-indigo-400' : 'text-indigo-600'} truncate`}>
+                      {method.type} ending in {method.last4}
                     </p>
-                    <p className="text-sm text-gray-500">
-                      Card ending in {method.last4}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Expires {method.expiryDate}
+                    <p className="text-sm">
+                      Expires: {method.expiryDate}
                     </p>
                   </div>
                   <button
                     onClick={() => handleRemovePaymentMethod(method.id)}
-                    className="text-red-600 hover
-"
+                    className={`text-red-600 hover:text-red-900 ${darkMode ? 'text-red-400 hover:text-red-300' : ''}`}
                   >
                     <Trash2 size={18} />
                   </button>
@@ -293,10 +286,7 @@ const AccountManagement = () => {
                 setNewCardNumber(e.target.value)
               }
               placeholder="Card Number"
-              className="flex-grow shadow-sm focus
-focus
-block sm
-border-gray-300 rounded-md"
+              className={`flex-grow shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
             />
             <input
               type="text"
@@ -304,11 +294,8 @@ border-gray-300 rounded-md"
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setNewCardExpiry(e.target.value)
               }
-              placeholder="MM/YY"
-              className="flex-grow shadow-sm focus
-focus
-block sm
-border-gray-300 rounded-md"
+              placeholder="Expiry Date"
+              className={`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
             />
             <input
               type="text"
@@ -317,12 +304,13 @@ border-gray-300 rounded-md"
                 setNewCardCVV(e.target.value)
               }
               placeholder="CVV"
-              className="flex-grow shadow-sm focus focus block sm border-gray-300 rounded-md" />
+              className={`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
+            />
             <button
               type="submit"
-              className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${darkMode ? 'text-gray-900 bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500' : 'text-white bg-indigo-600 hover:bg-indigo-700'} focus:outline-none focus:ring-2 focus:ring-offset-2`}
             >
-              <CreditCard size={18} className="mr-2" />
+              <PlusCircle size={18} className="mr-2" />
               Add Card
             </button>
           </form>

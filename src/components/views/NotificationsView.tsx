@@ -8,7 +8,11 @@ interface Notification {
   time: string;
 }
 
-function NotificationsView() {
+interface NotificationsViewProps {
+  darkMode: boolean;
+}
+
+function NotificationsView({ darkMode }: NotificationsViewProps) {
   const [notifications, setNotifications] = useState<Notification[]>([
     { id: 1, type: 'alert', message: 'Low balance in your checking account', time: '2 hours ago' },
     { id: 2, type: 'transaction', message: 'You received $500 from John Doe', time: '1 day ago' },
@@ -18,26 +22,26 @@ function NotificationsView() {
   const getIcon = (type: Notification['type']) => {
     switch (type) {
       case 'alert':
-        return <Bell className="text-yellow-500" />;
+        return <Bell className={darkMode ? "text-yellow-400" : "text-yellow-500"} />;
       case 'transaction':
-        return <DollarSign className="text-green-500" />;
+        return <DollarSign className={darkMode ? "text-green-400" : "text-green-500"} />;
       case 'card':
-        return <CreditCard className="text-blue-500" />;
+        return <CreditCard className={darkMode ? "text-blue-400" : "text-blue-500"} />;
       default:
-        return <Bell className="text-gray-500" />;
+        return <Bell className={darkMode ? "text-gray-400" : "text-gray-500"} />;
     }
   };
 
   return (
-    <div className="space-y-4">
+    <div className={`space-y-4 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
       {notifications.map((notification) => (
-        <div key={notification.id} className="bg-white shadow overflow-hidden sm:rounded-lg p-4 flex items-start">
+        <div key={notification.id} className={`shadow overflow-hidden sm:rounded-lg p-4 flex items-start ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-900'}`}>
           <div className="flex-shrink-0 mr-4">
             {getIcon(notification.type)}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900">{notification.message}</p>
-            <p className="text-sm text-gray-500">{notification.time}</p>
+            <p className="text-sm font-medium">{notification.message}</p>
+            <p className="text-sm">{notification.time}</p>
           </div>
         </div>
       ))}

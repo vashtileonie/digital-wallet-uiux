@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import { Search } from 'lucide-react';
 
 interface Transaction {
@@ -8,7 +8,11 @@ interface Transaction {
   amount: number;
 }
 
-function TransactionsView() {
+interface TransactionsViewProps {
+  darkMode: boolean;
+}
+
+const TransactionsView: React.FC<TransactionsViewProps> = ({ darkMode }) => {
   const [transactions, setTransactions] = useState<Transaction[]>([
     { id: 1, date: '2023-07-01', description: 'Grocery Store', amount: -75.5 },
     { id: 2, date: '2023-07-02', description: 'Salary Deposit', amount: 3000 },
@@ -26,32 +30,32 @@ function TransactionsView() {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center bg-white shadow rounded-lg p-2">
-        <Search className="text-gray-400 mr-2" size={20} />
+    <div className={`space-y-6 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+      <div className={`flex items-center shadow rounded-lg p-2 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+        <Search className={`text-gray-400 mr-2 ${darkMode ? 'text-gray-300' : 'text-gray-500'}`} size={20} />
         <input
           type="text"
           placeholder="Search transactions..."
-          className="flex-grow outline-none"
+          className={`flex-grow outline-none ${darkMode ? 'bg-gray-700 text-gray-300 placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500'}`}
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
         />
       </div>
-      <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className={`shadow overflow-hidden sm:rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+        <table className={`min-w-full divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
+          <thead className={`${darkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+              <th className={`px-6 py-3 text-left text-xs font-medium ${darkMode ? 'text-gray-300' : 'text-gray-500'} uppercase tracking-wider`}>Date</th>
+              <th className={`px-6 py-3 text-left text-xs font-medium ${darkMode ? 'text-gray-300' : 'text-gray-500'} uppercase tracking-wider`}>Description</th>
+              <th className={`px-6 py-3 text-right text-xs font-medium ${darkMode ? 'text-gray-300' : 'text-gray-500'} uppercase tracking-wider`}>Amount</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className={`${darkMode ? 'bg-gray-800 divide-gray-700' : 'bg-white divide-gray-200'}`}>
             {filteredTransactions.map((transaction) => (
-              <tr key={transaction.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.date}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{transaction.description}</td>
-                <td className={`px-6 py-4 whitespace-nowrap text-sm text-right ${transaction.amount < 0 ? 'text-red-600' : 'text-green-600'}`}>
+              <tr key={transaction.id} className={`${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+                <td className={`px-6 py-4 whitespace-nowrap text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{transaction.date}</td>
+                <td className={`px-6 py-4 whitespace-nowrap text-sm ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>{transaction.description}</td>
+                <td className={`px-6 py-4 whitespace-nowrap text-sm text-right ${transaction.amount < 0 ? (darkMode ? 'text-red-500' : 'text-red-600') : (darkMode ? 'text-green-400' : 'text-green-600')}`}>
                   {transaction.amount < 0 ? '-' : ''}${Math.abs(transaction.amount).toFixed(2)}
                 </td>
               </tr>
@@ -61,6 +65,6 @@ function TransactionsView() {
       </div>
     </div>
   );
-}
+};
 
 export default TransactionsView;

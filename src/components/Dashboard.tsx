@@ -60,15 +60,20 @@ function Dashboard({ onLogout }: DashboardProps) {
           ))}
         </nav>
         <div className="absolute bottom-0 w-64 p-4">
-          <label className="flex items-center cursor-pointer">
+        <label className="flex items-center cursor-pointer">
           <span className="mr-2">{darkMode ? 'Dark Mode' : 'Light Mode'}</span>
-            <input type="checkbox" checked={darkMode} onChange={toggleDarkMode} className="hidden" />
-           
-            <div className={`w-16 h-8 flex items-center ${darkMode ? 'justify-end' : 'justify-start'} bg-gray-200 rounded-xl p-1`}>
-              <div className={`w-6 h-6 rounded-full ${darkMode ? 'bg-gray-800' : 'bg-yellow-500'} shadow-md`} />
-            </div>
-
-          </label>
+            <input 
+              type="checkbox" 
+              checked={darkMode} 
+              onChange={toggleDarkMode} 
+              className="sr-only" 
+            />
+          <div className={`relative w-16 h-8 flex items-center ${darkMode ? 'bg-gray-700' : 'bg-gray-300'} rounded-full`}>
+            <div 
+              className={`absolute w-8 h-8 bg-white rounded-full shadow-md transition-transform transform ${darkMode ? 'translate-x-8' : 'translate-x-0'}`} 
+            />
+          </div>
+      </label>
           <button className="flex items-center text-gray-600 hover:text-red-500 mt-6" onClick={onLogout}>
             <LogOut className="mr-2" size={18} />
             Logout
@@ -87,12 +92,12 @@ function Dashboard({ onLogout }: DashboardProps) {
           <Routes>
             <Route path="/" element={<HomeView darkMode={darkMode} />} />
             <Route path="home" element={<HomeView darkMode={darkMode} />} />
-            <Route path="accounts" element={<AccountManagement />} />
-            <Route path="transactions" element={<TransactionsView />} />
-            <Route path="store-purchase" element={<StorePurchase />} />
-            <Route path="notifications" element={<NotificationsView />} />
-            <Route path="profile" element={<ProfileView />} />
-            <Route path="settings" element={<SettingsView />} />
+            <Route path="accounts" element={<AccountManagement darkMode={darkMode}/>} />
+            <Route path="transactions" element={<TransactionsView darkMode={darkMode}/>} />
+            <Route path="store-purchase" element={<StorePurchase darkMode={darkMode} />} />
+            <Route path="notifications" element={<NotificationsView darkMode={darkMode}/>} />
+            <Route path="profile" element={<ProfileView darkMode={darkMode}/>} />
+            <Route path="settings" element={<SettingsView darkMode={darkMode}/>} />
           </Routes>
         </main>
       </div>
