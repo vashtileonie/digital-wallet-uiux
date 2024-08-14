@@ -11,9 +11,9 @@ module.exports = {
       },
       backgroundColor: {
         'dark-mode': '#1a202c', // Dark mode background color (for the main background)
-        'light-mode': '#f7fafc', // Light mode background color
+        'light-mode': '#F0F8FF', // Light mode background color
         'card-dark-mode': '#2d3748', // Dark mode card color (lighter grey)
-        'card-light-mode': '#F0F0F0', // Light mode card color
+        'card-light-mode': '#FBFCF8', // Light mode card color
       },
       textColor: {
         'dark-mode': '#edf2f7', // Dark mode text color
