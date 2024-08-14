@@ -38,16 +38,16 @@ function HomeView({ darkMode }: HomeViewProps) {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div className={`${darkMode ? 'bg-card-dark-mode text-dark-mode' : 'bg-card-light-mode text-light-mode'} overflow-hidden shadow rounded-lg`}>
-        <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg font-medium mb-4">Total Balance</h3>
-          <p className="text-3xl font-bold">${balance.toFixed(2)}</p>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 sm:p-6">
+      <div className={`${darkMode ? 'bg-card-dark-mode text-dark-mode' : 'bg-card-light-mode text-light-mode'} overflow-hidden shadow rounded-lg p-4 sm:p-6`}>
+        <div>
+          <h3 className="text-lg font-medium mb-2 lg:mb-4">Total Balance</h3>
+          <p className="text-2xl lg:text-3xl font-bold">${balance.toFixed(2)}</p>
         </div>
       </div>
-      <div className={`${darkMode ? 'bg-card-dark-mode text-dark-mode' : 'bg-card-light-mode text-light-mode'} overflow-hidden shadow rounded-lg`}>
-        <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg font-medium mb-4">Quick Actions</h3>
+      <div className={`${darkMode ? 'bg-card-dark-mode text-dark-mode' : 'bg-card-light-mode text-light-mode'} overflow-hidden shadow rounded-lg p-4 sm:p-6`}>
+        <div>
+          <h3 className="text-lg font-medium mb-2 lg:mb-4">Quick Actions</h3>
           <div className="space-y-2">
             <button onClick={handleSendMoney} className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200 flex items-center justify-center">
               <ArrowUpRight className="mr-2" size={18} />
