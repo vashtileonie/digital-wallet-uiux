@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowUpRight, ArrowDownLeft, Wallet } from 'lucide-react';
+import logoImage from '../assets/logo-digiwallet.png';
 
 interface HomeViewProps {
   darkMode: boolean;

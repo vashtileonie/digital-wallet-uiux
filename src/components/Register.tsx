@@ -11,7 +11,7 @@ const users: Array<{ name: string; email: string; password: string }> = [
   { name: 'Jane Smith', email: 'jane@example.com', password: 'password456' },
 ];
 
-const Register: React.FC<RegisterProps> = ({ onLogin }) => {
+function Register({ onLogin }: RegisterProps) {
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');

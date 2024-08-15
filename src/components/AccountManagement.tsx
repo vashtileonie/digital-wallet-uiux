@@ -25,7 +25,7 @@ interface AccountManagementProps {
   darkMode: boolean;
 }
 
-const AccountManagement: React.FC<AccountManagementProps> = ({ darkMode }) => {
+const AccountManagement = ({ darkMode }: AccountManagementProps) => {
   const [accounts, setAccounts] = useState<Account[]>([
     { id: 1, type: "Checking", name: "Main Checking", balance: 5000 },
     { id: 2, type: "Savings", name: "Emergency Fund", balance: 10000 },
@@ -255,9 +255,10 @@ const AccountManagement: React.FC<AccountManagementProps> = ({ darkMode }) => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between">
                   <div className="flex-grow">
                     <p className={`text-sm font-medium ${darkMode ? 'text-indigo-400' : 'text-indigo-600'} truncate`}>
-                      {method.type} - ****{method.last4}
+                      {method.type}
                     </p>
-                    <p className="text-sm">Expires {method.expiryDate}</p>
+                    <p className="text-sm">**** **** **** {method.last4}</p>
+                    <p className="text-sm">{method.expiryDate}</p>
                   </div>
                   <button
                     onClick={() => handleRemovePaymentMethod(method.id)}
@@ -290,8 +291,8 @@ const AccountManagement: React.FC<AccountManagementProps> = ({ darkMode }) => {
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setNewCardExpiry(e.target.value)
               }
-              placeholder="Expiry Date (MM/YY)"
-              className={`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
+              placeholder="MM/YY"
+              className={`flex-grow shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
             />
             <input
               type="text"
@@ -300,14 +301,14 @@ const AccountManagement: React.FC<AccountManagementProps> = ({ darkMode }) => {
                 setNewCardCVV(e.target.value)
               }
               placeholder="CVV"
-              className={`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
+              className={`flex-grow shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
             />
             <button
               type="submit"
               className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${darkMode ? 'text-gray-900 bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500' : 'text-white bg-indigo-600 hover:bg-indigo-700'} focus:outline-none focus:ring-2 focus:ring-offset-2`}
             >
               <PlusCircle size={18} className="mr-2" />
-              Add Card
+              Add Payment Method
             </button>
           </form>
         </div>

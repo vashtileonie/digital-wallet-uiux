@@ -12,7 +12,7 @@ interface StorePurchaseProps {
   darkMode: boolean;
 }
 
-const StorePurchase: React.FC<StorePurchaseProps> = ({ darkMode }) => {
+const StorePurchase = ({ darkMode }: StorePurchaseProps) => {
   const [scanningMode, setScanningMode] = useState<'store' | 'item' | null>(null);
   const [selectedStore, setSelectedStore] = useState<QRCode | null>(null);
   const [cart, setCart] = useState<QRCode[]>([]);
@@ -59,7 +59,7 @@ const StorePurchase: React.FC<StorePurchaseProps> = ({ darkMode }) => {
     setSelectedStore(null);
   };
 
-  const QRScanner: React.FC<{ onScan: (qrCode: string) => void }> = ({ onScan }) => (
+  const QRScanner = ({ onScan }: { onScan: (qrCode: string) => void }) => (
     <div className={`p-4 rounded-lg text-center ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-gray-200 text-gray-900'}`}>
       <p className="mb-2">Scanning QR Code...</p>
       <input

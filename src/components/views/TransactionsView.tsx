@@ -12,7 +12,7 @@ interface TransactionsViewProps {
   darkMode: boolean;
 }
 
-const TransactionsView: React.FC<TransactionsViewProps> = ({ darkMode }) => {
+const TransactionsView = ({ darkMode }: TransactionsViewProps) => {
   const [transactions, setTransactions] = useState<Transaction[]>([
     { id: 1, date: '2023-07-01', description: 'Grocery Store', amount: -75.5 },
     { id: 2, date: '2023-07-02', description: 'Salary Deposit', amount: 3000 },
