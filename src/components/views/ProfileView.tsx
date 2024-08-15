@@ -35,13 +35,13 @@ function ProfileView({ darkMode }: ProfileViewProps) {
   };
 
   return (
-    <div className={`shadow overflow-hidden sm:rounded-lg ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-900'}`}>
+    <div className={`shadow overflow-hidden sm:rounded-lg mx-4 my-6 sm:mx-8 sm:my-8 ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-900'}`}>
       <div className={`px-4 py-5 sm:px-6 ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
         <h3 className="text-lg leading-6 font-medium">User Profile</h3>
       </div>
       <div className={`border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
         <dl>
-          <div className={`bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+          <div className={`bg-gray-50 px-4 py-5 grid grid-cols-1 gap-y-3 sm:grid-cols-3 sm:gap-4 sm:px-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
             <dt className="text-sm font-medium flex items-center">
               <User className="mr-2" size={18} /> Full name
             </dt>
@@ -59,7 +59,7 @@ function ProfileView({ darkMode }: ProfileViewProps) {
               )}
             </dd>
           </div>
-          <div className={`bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+          <div className={`bg-gray-50 px-4 py-5 grid grid-cols-1 gap-y-3 sm:grid-cols-3 sm:gap-4 sm:px-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
             <dt className="text-sm font-medium flex items-center">
               <Mail className="mr-2" size={18} /> Email address
             </dt>
@@ -77,7 +77,7 @@ function ProfileView({ darkMode }: ProfileViewProps) {
               )}
             </dd>
           </div>
-          <div className={`bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+          <div className={`bg-gray-50 px-4 py-5 grid grid-cols-1 gap-y-3 sm:grid-cols-3 sm:gap-4 sm:px-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
             <dt className="text-sm font-medium flex items-center">
               <Phone className="mr-2" size={18} /> Phone number
             </dt>
@@ -97,7 +97,7 @@ function ProfileView({ darkMode }: ProfileViewProps) {
           </div>
         </dl>
       </div>
-      <div className={`px-4 py-3 sm:px-6 flex justify-end ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+      <div className={`px-4 py-3 flex justify-end sm:px-6 ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
         {isEditing ? (
           <button
             onClick={handleSave}

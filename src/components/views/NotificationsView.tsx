@@ -33,10 +33,14 @@ function NotificationsView({ darkMode }: NotificationsViewProps) {
   };
 
   return (
-    <div className={`space-y-4 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+    <div className={`space-y-4 p-4 sm:p-6 ${darkMode ? 'bg-gray-900' : 'bg-transparent'}`}>
       {notifications.map((notification) => (
-        <div key={notification.id} className={`shadow overflow-hidden sm:rounded-lg p-4 flex items-start ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-900'}`}>
-          <div className="flex-shrink-0 mr-4">
+        <div
+          key={notification.id}
+          className={`shadow overflow-hidden rounded-lg p-4 sm:p-6 flex items-start 
+                      ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-900'}`}
+        >
+          <div className="flex-shrink-0 mr-4 sm:mr-6">
             {getIcon(notification.type)}
           </div>
           <div className="flex-1 min-w-0">

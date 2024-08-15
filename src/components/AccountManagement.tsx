@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import { PlusCircle, CreditCard, Building, Trash2 } from "lucide-react";
+import { PlusCircle, Trash2 } from "lucide-react";
 
 interface Account {
   id: number;
@@ -111,7 +111,7 @@ const AccountManagement: React.FC<AccountManagementProps> = ({ darkMode }) => {
   };
 
   return (
-    <div className={`space-y-6 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+    <div className={`space-y-6 p-4 sm:p-6 lg:p-8 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
       <div className={`shadow overflow-hidden sm:rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
         <div className="px-4 py-5 sm:px-6">
           <h3 className={`text-lg leading-6 font-medium ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
@@ -122,14 +122,14 @@ const AccountManagement: React.FC<AccountManagementProps> = ({ darkMode }) => {
           <ul className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
             {accounts.map((account) => (
               <li key={account.id} className={`px-4 py-4 sm:px-6 ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-900'}`}>
-                <div className="flex items-center justify-between">
-                  <div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between">
+                  <div className="flex-grow">
                     <p className={`text-sm font-medium ${darkMode ? 'text-indigo-400' : 'text-indigo-600'} truncate`}>
                       {account.name}
                     </p>
                     <p className="text-sm">{account.type}</p>
                   </div>
-                  <div className="flex items-center">
+                  <div className="flex items-center mt-2 sm:mt-0">
                     <p className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${darkMode ? 'bg-green-900 text-green-400' : 'bg-green-100 text-green-800'}`}>
                       ${account.balance.toFixed(2)}
                     </p>
@@ -148,7 +148,7 @@ const AccountManagement: React.FC<AccountManagementProps> = ({ darkMode }) => {
         <div className="px-4 py-4 sm:px-6">
           <form
             onSubmit={handleAddAccount}
-            className="flex items-center space-x-2"
+            className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2"
           >
             <input
               type="text"
@@ -190,18 +190,16 @@ const AccountManagement: React.FC<AccountManagementProps> = ({ darkMode }) => {
           <ul className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
             {linkedBanks.map((bank) => (
               <li key={bank.id} className={`px-4 py-4 sm:px-6 ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-900'}`}>
-                <div className="flex items-center justify-between">
-                  <div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between">
+                  <div className="flex-grow">
                     <p className={`text-sm font-medium ${darkMode ? 'text-indigo-400' : 'text-indigo-600'} truncate`}>
                       {bank.name}
                     </p>
-                    <p className="text-sm">
-                      Account: {bank.accountNumber}
-                    </p>
+                    <p className="text-sm">{bank.accountNumber}</p>
                   </div>
                   <button
                     onClick={() => handleRemoveBank(bank.id)}
-                    className={`text-red-600 hover:text-red-900 ${darkMode ? 'text-red-400 hover:text-red-300' : ''}`}
+                    className={`ml-2 ${darkMode ? 'text-red-400 hover:text-red-300' : 'text-red-600 hover:text-red-900'}`}
                   >
                     <Trash2 size={18} />
                   </button>
@@ -213,7 +211,7 @@ const AccountManagement: React.FC<AccountManagementProps> = ({ darkMode }) => {
         <div className="px-4 py-4 sm:px-6">
           <form
             onSubmit={handleLinkBank}
-            className="flex items-center space-x-2"
+            className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2"
           >
             <input
               type="text"
@@ -231,7 +229,7 @@ const AccountManagement: React.FC<AccountManagementProps> = ({ darkMode }) => {
                 setNewBankAccountNumber(e.target.value)
               }
               placeholder="Account Number"
-              className={`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
+              className={`flex-grow shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
             />
             <button
               type="submit"
@@ -254,18 +252,16 @@ const AccountManagement: React.FC<AccountManagementProps> = ({ darkMode }) => {
           <ul className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
             {paymentMethods.map((method) => (
               <li key={method.id} className={`px-4 py-4 sm:px-6 ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-900'}`}>
-                <div className="flex items-center justify-between">
-                  <div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between">
+                  <div className="flex-grow">
                     <p className={`text-sm font-medium ${darkMode ? 'text-indigo-400' : 'text-indigo-600'} truncate`}>
-                      {method.type} ending in {method.last4}
+                      {method.type} - ****{method.last4}
                     </p>
-                    <p className="text-sm">
-                      Expires: {method.expiryDate}
-                    </p>
+                    <p className="text-sm">Expires {method.expiryDate}</p>
                   </div>
                   <button
                     onClick={() => handleRemovePaymentMethod(method.id)}
-                    className={`text-red-600 hover:text-red-900 ${darkMode ? 'text-red-400 hover:text-red-300' : ''}`}
+                    className={`ml-2 ${darkMode ? 'text-red-400 hover:text-red-300' : 'text-red-600 hover:text-red-900'}`}
                   >
                     <Trash2 size={18} />
                   </button>
@@ -277,7 +273,7 @@ const AccountManagement: React.FC<AccountManagementProps> = ({ darkMode }) => {
         <div className="px-4 py-4 sm:px-6">
           <form
             onSubmit={handleAddPaymentMethod}
-            className="flex items-center space-x-2"
+            className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2"
           >
             <input
               type="text"
@@ -294,7 +290,7 @@ const AccountManagement: React.FC<AccountManagementProps> = ({ darkMode }) => {
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setNewCardExpiry(e.target.value)
               }
-              placeholder="Expiry Date"
+              placeholder="Expiry Date (MM/YY)"
               className={`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
             />
             <input
