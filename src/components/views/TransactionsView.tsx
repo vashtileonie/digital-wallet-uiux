@@ -30,7 +30,7 @@ const TransactionsView = ({ darkMode }: TransactionsViewProps) => {
   );
 
   return (
-    <div className={`space-y-4 p-4 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+    <div className={`space-y-4 p-4`}>
       <div className={`flex items-center shadow rounded-lg p-2 sm:p-4 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
         <Search className={`text-gray-400 mr-2 ${darkMode ? 'text-gray-300' : 'text-gray-500'}`} size={20} />
         <input

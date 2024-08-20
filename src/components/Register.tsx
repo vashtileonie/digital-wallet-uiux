@@ -1,15 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import users from '../users.json';
 
 interface RegisterProps {
   onLogin: () => void;
 }
-
-// Simulated in-memory user database
-const users: Array<{ name: string; email: string; password: string }> = [
-  { name: 'John Doe', email: 'john@example.com', password: 'password123' },
-  { name: 'Jane Smith', email: 'jane@example.com', password: 'password456' },
-];
 
 function Register({ onLogin }: RegisterProps) {
   const [name, setName] = useState<string>('');
@@ -27,7 +22,7 @@ function Register({ onLogin }: RegisterProps) {
     if (userExists) {
       alert('Email is already registered. Please use a different email or log in.');
     } else {
-      // Register the user by adding them to the dummy database
+      // Register the user by adding them to the JSON data (Note: this change won't persist)
       users.push({ name, email, password });
       console.log('Registration successful:', name, email);
 
@@ -37,9 +32,11 @@ function Register({ onLogin }: RegisterProps) {
   };
 
   return (
-    <div className={`min-h-screen flex items-center justify-center p-4 ${darkMode ? 'bg-dark-mode text-dark-mode' : 'bg-light-mode text-light-mode'}`}>
+    <div className={`min-h-screen flex items-center justify-center p-4 ${darkMode ? 'bg-dark-gradient text-dark-mode' : 'bg-light-gradient text-light-mode'}`}>
       <div className={`w-full max-w-sm md:max-w-md lg:max-w-lg ${darkMode ? 'bg-card-dark-mode' : 'bg-card-light-mode'} p-6 md:p-8 rounded-lg shadow-md`}>
-        <h2 className="text-lg md:text-2xl font-bold mb-4 text-center">Register for DigiWallet</h2>
+      <h2 className="text-lg md:text-2xl font-bold">Get Started</h2>
+      <h1 className="text-base md:text-xl mb-4 italic">Register for DigiWallet</h1>
+    
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium">Name</label>

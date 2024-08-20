@@ -33,7 +33,7 @@ function NotificationsView({ darkMode }: NotificationsViewProps) {
   };
 
   return (
-    <div className={`space-y-4 p-4 sm:p-6 ${darkMode ? 'bg-gray-900' : 'bg-transparent'}`}>
+    <div className={`space-y-4 p-4 sm:p-6`}>
       {notifications.map((notification) => (
         <div
           key={notification.id}

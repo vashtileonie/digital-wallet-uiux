@@ -111,7 +111,7 @@ const AccountManagement = ({ darkMode }: AccountManagementProps) => {
   };
 
   return (
-    <div className={`space-y-6 p-4 sm:p-6 lg:p-8 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+    <div className={`space-y-6 p-4 sm:p-6 lg:p-8`}>
       <div className={`shadow overflow-hidden sm:rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
         <div className="px-4 py-5 sm:px-6">
           <h3 className={`text-lg leading-6 font-medium ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>

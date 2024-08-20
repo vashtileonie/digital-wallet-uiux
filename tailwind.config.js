@@ -10,7 +10,6 @@ module.exports = {
         'light-grey': '#F0F0F0', // Light grey color for the card
       },
       backgroundColor: {
-        'dark-mode': '#1a202c', // Dark mode background color (for the main background)
         'light-mode': '#F0F8FF', // Light mode background color
         'card-dark-mode': '#2d3748', // Dark mode card color (lighter grey)
         'card-light-mode': '#FBFCF8', // Light mode card color
@@ -18,6 +17,12 @@ module.exports = {
       textColor: {
         'dark-mode': '#edf2f7', // Dark mode text color
         'light-mode': '#2d3748', // Light mode text color
+      },
+      backgroundImage: {
+        'dark-gradient': 'linear-gradient(45deg, #02133d, #031c5c 50%, #0532a1)',
+        'light-gradient': 'linear-gradient(45deg, #b3bfc9, #b8cad9 50%, #F0F8FF)',
+        'card-dark-gradient': 'linear-gradient(45deg, #b3bfc9, #b8cad9 50%, #F0F8FF)',
+        'card-light-gradient': 'linear-gradient(45deg, #02133d, #031c5c 50%, #0532a1)',
       },
     },
     screens: {

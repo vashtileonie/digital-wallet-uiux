@@ -35,7 +35,7 @@ function ProfileView({ darkMode }: ProfileViewProps) {
   };
 
   return (
-    <div className={`shadow overflow-hidden sm:rounded-lg mx-4 my-6 sm:mx-8 sm:my-8 ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-900'}`}>
+    <div className={`shadow overflow-hidden sm:rounded-lg mx-4 my-6 sm:mx-8 sm:my-8 `}>
       <div className={`px-4 py-5 sm:px-6 ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
         <h3 className="text-lg leading-6 font-medium">User Profile</h3>
       </div>

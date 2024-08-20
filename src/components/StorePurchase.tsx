@@ -78,7 +78,7 @@ const StorePurchase = ({ darkMode }: StorePurchaseProps) => {
   );
 
   return (
-    <div className={`space-y-6 ${darkMode ? 'bg-gray-900 text-gray-300' : 'bg-transparent text-gray-900'} p-4 sm:p-6 lg:p-8`}>
+    <div className={`space-y-6 p-4 sm:p-6 lg:p-8`}>
       {!selectedStore ? (
         <div className={`shadow overflow-hidden sm:rounded-lg ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} p-4 sm:p-6`}>
           <div className={`px-4 py-5 sm:px-6 ${darkMode ? 'bg-gray-700' : 'bg-gray-100'} rounded-lg`}>

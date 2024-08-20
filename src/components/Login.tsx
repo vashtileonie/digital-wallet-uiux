@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { SunIcon, MoonIcon } from '@heroicons/react/24/solid';
 import gifImage from '../assets/gif3.gif';
+import credentials from '../credentials.json';
 
 interface LoginProps {
   onLogin: () => void;
@@ -13,13 +14,11 @@ function Login({ onLogin }: LoginProps) {
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const dummyEmail = 'john@example.com';
-  const dummyPassword = 'password123';
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (email === dummyEmail && password === dummyPassword) {
+    if (email === credentials.email && password === credentials.password) {
       console.log('Login successful:', email);
       onLogin();
       navigate('/dashboard');
@@ -30,13 +29,14 @@ function Login({ onLogin }: LoginProps) {
   };
 
   return (
-    <div className={`min-h-screen flex items-center justify-center p-4 ${darkMode ? 'bg-dark-mode text-dark-mode' : 'bg-light-mode text-light-mode'}`}>
+    <div className={`min-h-screen flex items-center justify-center p-4 ${darkMode ? 'bg-dark-gradient text-dark-mode' : 'bg-light-gradient text-light-mode'}`}>
       <div className={`flex flex-col md:flex-row w-full max-w-sm md:max-w-2xl ${darkMode ? 'bg-card-dark-mode' : 'bg-card-light-mode'} rounded-lg shadow-lg overflow-hidden`}>
         <div className="w-full h-48 md:h-auto md:w-1/2 flex items-center justify-center bg-gray-50">
           <img src={gifImage} alt="GIF" className="object-cover w-full h-full" />
         </div>
         <div className="w-full md:w-1/2 p-6 md:py-12 md:px-16 flex flex-col justify-center">
-          <h2 className="text-lg md:text-2xl font-bold mb-4">Hello!</h2>
+          <h2 className="text-lg md:text-2xl font-bold">Hello!</h2>
+          <h1 className="text-base md:text-xl mb-4 italic">Welcome to DigiWallet</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium">Email</label>
