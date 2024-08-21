@@ -1,12 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowUpRight, ArrowDownLeft, Wallet } from 'lucide-react';
 
 interface HomeViewProps {
   darkMode: boolean;
+  userToken: string;
 }
 
-function HomeView({ darkMode }: HomeViewProps) {
-  const [balance, setBalance] = useState<number>(5000);
+function HomeView({ darkMode, userToken }: HomeViewProps) {
+  const [balance, setBalance] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      if (!userToken) {
+        console.error('User token is not available');
+        return;
+      }
+
+      const apiUrl = `http://localhost:3000/api/wallet/balance`;
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${userToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setBalance(data.balance);
+        } else {
+          console.error('Failed to fetch balance, status code:', response.status);
+        }
+      } catch (error) {
+        console.error('Error fetching balance:', error);
+      }
+    };
+
+    fetchBalance();
+  }, [userToken]);
 
   const handleSendMoney = () => {
     const amount = parseFloat(prompt("Enter amount to send:") || '');
@@ -39,27 +72,17 @@ function HomeView({ darkMode }: HomeViewProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 sm:p-6">
-      {/* Modified Total Balance Card */}
       <div className={`${darkMode ? 'bg-card-dark-gradient text-light-mode' : 'bg-card-light-gradient text-dark-mode'} shadow-lg rounded-lg p-4 sm:p-6 relative`}>
         <div className="mb-4">
           <h3 className="text-base font-semibold mb-1">Total Balance</h3>
           <p className="text-3xl font-bold">${balance.toFixed(2)}</p>
         </div>
-        <div className="flex justify-between items-center">
-          <div>
+        <div className="flex justify-end items-center">
+          <div className="absolute bottom-4 right-4 text-right italic">
             <p className={`${darkMode ? 'text-grey-600' : 'text-grey-200'} text-sm`}>Visa Card</p>
-            
-          </div>
-          <div className="text-right">
-            <p className="text-xl font-bold">John Dela Cruz</p>
           </div>
         </div>
-        <button className="absolute bottom-4 right-4 text-blue-600 hover:underline">
-          View All
-        </button>
       </div>
-
-      {/* Quick Actions */}
       <div className={`${darkMode ? 'bg-card-dark-mode text-dark-mode' : 'bg-card-light-mode text-light-mode'} overflow-hidden shadow rounded-lg p-4 sm:p-6`}>
         <div>
           <h3 className="text-lg font-medium mb-2 lg:mb-4">Quick Actions</h3>

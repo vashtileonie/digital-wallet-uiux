@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Home, CreditCard, DollarSign, Bell, User, Settings, LogOut, ShoppingBag } from 'lucide-react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import HomeView from './views/HomeView';
@@ -19,7 +19,18 @@ function Dashboard({ onLogout }: DashboardProps) {
   const [activeTab, setActiveTab] = useState<string>('home');
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [userToken, setUserToken] = useState<string>('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('userToken');
+    if (token) {
+      setUserToken(token);
+      console.log('UserToken set:', token);
+    } else {
+      console.error('UserToken not found in localStorage');
+    }
+  }, []);
 
   const sidebarLinks = [
     { icon: <Home />, label: 'Home', key: 'home' },
@@ -72,7 +83,6 @@ function Dashboard({ onLogout }: DashboardProps) {
           ))}
         </nav>
         <div className="absolute bottom-0 w-64 p-4">
-          
           <button className="flex items-center text-gray-600 hover:text-red-500 mt-6" onClick={onLogout}>
             <LogOut className="mr-2" size={18} />
             Logout
@@ -91,18 +101,22 @@ function Dashboard({ onLogout }: DashboardProps) {
           </h1>
         </header>
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-       
-<Routes>
-  <Route path="/" element={<HomeView darkMode={darkMode} />} />
-  <Route path="home" element={<HomeView darkMode={darkMode} />} />
-  <Route path="accounts" element={<AccountManagement darkMode={darkMode} />} />
-  <Route path="transactions" element={<TransactionsView darkMode={darkMode} />} />
-  <Route path="store-purchase" element={<StorePurchase darkMode={darkMode} />} />
-  <Route path="notifications" element={<NotificationsView darkMode={darkMode} />} />
-  <Route path="profile" element={<ProfileView darkMode={darkMode} />} />
-  <Route path="settings" element={<SettingsView darkMode={darkMode} toggleDarkMode={toggleDarkMode} />} />
-</Routes>
-
+          <Routes>
+            <Route 
+              path="/" 
+              element={userToken ? <HomeView darkMode={darkMode} userToken={userToken} /> : <p>Loading...</p>} 
+            />
+            <Route 
+              path="home" 
+              element={userToken ? <HomeView darkMode={darkMode} userToken={userToken} /> : <p>Loading...</p>} 
+            />
+            <Route path="accounts" element={<AccountManagement darkMode={darkMode} />} />
+            <Route path="transactions" element={<TransactionsView darkMode={darkMode} />} />
+            <Route path="store-purchase" element={<StorePurchase darkMode={darkMode} />} />
+            <Route path="notifications" element={<NotificationsView darkMode={darkMode} />} />
+            <Route path="profile" element={<ProfileView darkMode={darkMode} />} />
+            <Route path="settings" element={<SettingsView darkMode={darkMode} toggleDarkMode={toggleDarkMode} />} />
+          </Routes>
         </main>
       </div>
     </div>

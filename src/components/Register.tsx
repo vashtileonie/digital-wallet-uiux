@@ -13,23 +13,34 @@ function Register({ onLogin }: RegisterProps) {
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // Check if the email is already registered
-    const userExists = users.some(user => user.email === email);
-
-    if (userExists) {
-      alert('Email is already registered. Please use a different email or log in.');
-    } else {
-      // Register the user by adding them to the JSON data (Note: this change won't persist)
-      users.push({ name, email, password });
-      console.log('Registration successful:', name, email);
-
-      onLogin(); // Automatically log in the user after successful registration
-      navigate('/dashboard'); // Navigate to dashboard after successful registration
+  
+    try {
+      const response = await fetch('http://localhost:3000/api/auth/register', { // Replace with your actual API URL
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Registration successful:', data);
+        onLogin(); // Automatically log in the user after successful registration
+        navigate('/dashboard');
+      } else {
+        const errorData = await response.json();
+        console.log('Registration failed:', errorData.error);
+        alert(errorData.error || 'Registration failed');
+      }
+    } catch (error) {
+      console.error('Error during registration:', error);
+      alert('An error occurred during registration. Please try again.');
     }
   };
+  
 
   return (
     <div className={`min-h-screen flex items-center justify-center p-4 ${darkMode ? 'bg-dark-gradient text-dark-mode' : 'bg-light-gradient text-light-mode'}`}>

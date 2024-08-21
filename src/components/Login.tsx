@@ -15,19 +15,35 @@ function Login({ onLogin }: LoginProps) {
   const navigate = useNavigate();
 
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (email === credentials.email && password === credentials.password) {
-      console.log('Login successful:', email);
-      onLogin();
-      navigate('/dashboard');
-    } else {
-      console.log('Login failed: Invalid credentials');
-      alert('Invalid email or password.');
+  
+    try {
+      const response = await fetch('http://localhost:3000/api/auth/login', { // Replace with your actual API URL
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Login successful:', data);
+        localStorage.setItem('userToken', data.token); 
+        onLogin();
+        navigate('/dashboard');
+      } else {
+        const errorData = await response.json();
+        console.log('Login failed:', errorData.error);
+        alert(errorData.error || 'Login failed');
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      alert('An error occurred during login. Please try again.');
     }
   };
-
+  
   return (
     <div className={`min-h-screen flex items-center justify-center p-4 ${darkMode ? 'bg-dark-gradient text-dark-mode' : 'bg-light-gradient text-light-mode'}`}>
       <div className={`flex flex-col md:flex-row w-full max-w-sm md:max-w-2xl ${darkMode ? 'bg-card-dark-mode' : 'bg-card-light-mode'} rounded-lg shadow-lg overflow-hidden`}>

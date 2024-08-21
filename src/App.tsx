@@ -5,7 +5,7 @@ import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   const handleLogin = () => {
     setIsAuthenticated(true);
@@ -19,9 +19,18 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} />
-          <Route path="/login" element={<Login onLogin={handleLogin} />} />
-          <Route path="/register" element={<Register onLogin={handleLogin} />} />
+          <Route 
+            path="/" 
+            element={isAuthenticated ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} 
+          />
+          <Route 
+            path="/login" 
+            element={<Login onLogin={handleLogin} />} 
+          />
+          <Route 
+            path="/register" 
+            element={<Register onLogin={handleLogin} />} 
+          />
           <Route 
             path="/dashboard/*" 
             element={isAuthenticated ? <Dashboard onLogout={handleLogout} /> : <Navigate to="/login" />} 
