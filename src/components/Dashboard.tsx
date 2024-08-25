@@ -20,6 +20,7 @@ function Dashboard({ onLogout }: DashboardProps) {
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [userToken, setUserToken] = useState<string>('');
+  const [kycStatus, setKycStatus] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,10 +28,59 @@ function Dashboard({ onLogout }: DashboardProps) {
     if (token) {
       setUserToken(token);
       console.log('UserToken set:', token);
+      fetchKycStatus(token);
     } else {
       console.error('UserToken not found in localStorage');
     }
   }, []);
+
+  const fetchKycStatus = async (token: string) => {
+    const apiUrl = `http://localhost:3000/api/kyc/status`;
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setKycStatus(data.status);
+      } else {
+        console.error('Failed to fetch KYC status, status code:', response.status);
+        setKycStatus(null); // Treat as no KYC status
+      }
+    } catch (error) {
+      console.error('Error fetching KYC status:', error);
+      setKycStatus(null); // Treat as no KYC status
+    }
+  };
+
+  const initiateKyc = async () => {
+    const apiUrl = `http://localhost:3000/api/kyc/initiate`;
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${userToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        alert('KYC initiated successfully!');
+        fetchKycStatus(userToken); // Re-fetch KYC status after initiation
+      } else {
+        console.error('Failed to initiate KYC, status code:', response.status);
+      }
+    } catch (error) {
+      console.error('Error initiating KYC:', error);
+    }
+  };
 
   const sidebarLinks = [
     { icon: <Home />, label: 'Home', key: 'home' },
@@ -81,6 +131,15 @@ function Dashboard({ onLogout }: DashboardProps) {
               {link.label}
             </button>
           ))}
+          {/* KYC Validation Button */}
+          {kycStatus !== 'approved' && (
+            <button
+              className="flex items-center w-full py-2 px-4 mt-4 bg-red-500 text-white hover:bg-red-600"
+              onClick={initiateKyc}
+            >
+              Validate
+            </button>
+          )}
         </nav>
         <div className="absolute bottom-0 w-64 p-4">
           <button className="flex items-center text-gray-600 hover:text-red-500 mt-6" onClick={onLogout}>

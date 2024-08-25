@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { SunIcon, MoonIcon } from '@heroicons/react/24/solid';
 import gifImage from '../assets/gif3.gif';
-import credentials from '../credentials.json';
+
 
 interface LoginProps {
   onLogin: () => void;
@@ -19,7 +19,7 @@ function Login({ onLogin }: LoginProps) {
     e.preventDefault();
   
     try {
-      const response = await fetch('http://localhost:3000/api/auth/login', { // Replace with your actual API URL
+      const response = await fetch('http://localhost:3000/api/auth/login', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

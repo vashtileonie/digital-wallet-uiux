@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import users from '../users.json';
+
 
 interface RegisterProps {
   onLogin: () => void;
@@ -17,7 +17,7 @@ function Register({ onLogin }: RegisterProps) {
     e.preventDefault();
   
     try {
-      const response = await fetch('http://localhost:3000/api/auth/register', { // Replace with your actual API URL
+      const response = await fetch('http://localhost:3000/api/auth/register', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
