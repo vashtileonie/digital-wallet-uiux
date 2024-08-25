@@ -38,7 +38,11 @@ function HomeView({ darkMode, userToken }: HomeViewProps) {
       }
     };
 
-    fetchBalance();
+    fetchBalance(); // Fetch balance on component mount
+
+    const intervalId = setInterval(fetchBalance, 30000); // Poll every 30 seconds
+
+    return () => clearInterval(intervalId); // Cleanup interval on unmount
   }, [userToken]);
 
   const handleSendMoney = () => {

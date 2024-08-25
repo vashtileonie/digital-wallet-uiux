@@ -21,13 +21,16 @@ function Dashboard({ onLogout }: DashboardProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [userToken, setUserToken] = useState<string>('');
   const [kycStatus, setKycStatus] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isFileUploadPromptVisible, setIsFileUploadPromptVisible] = useState<boolean>(false);
+  const [isCreateWalletButtonVisible, setIsCreateWalletButtonVisible] = useState<boolean>(false);
+  const [initialBalance, setInitialBalance] = useState<number | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('userToken');
     if (token) {
       setUserToken(token);
-      console.log('UserToken set:', token);
       fetchKycStatus(token);
     } else {
       console.error('UserToken not found in localStorage');
@@ -49,13 +52,16 @@ function Dashboard({ onLogout }: DashboardProps) {
       if (response.ok) {
         const data = await response.json();
         setKycStatus(data.status);
+        if (data.status === 'approved') {
+          
+        }
       } else {
         console.error('Failed to fetch KYC status, status code:', response.status);
-        setKycStatus(null); // Treat as no KYC status
+        setKycStatus(null);
       }
     } catch (error) {
       console.error('Error fetching KYC status:', error);
-      setKycStatus(null); // Treat as no KYC status
+      setKycStatus(null);
     }
   };
 
@@ -73,12 +79,105 @@ function Dashboard({ onLogout }: DashboardProps) {
 
       if (response.ok) {
         alert('KYC initiated successfully!');
-        fetchKycStatus(userToken); // Re-fetch KYC status after initiation
+        setIsFileUploadPromptVisible(true); // Show file upload prompt
+        fetchKycStatus(userToken);
       } else {
         console.error('Failed to initiate KYC, status code:', response.status);
       }
     } catch (error) {
       console.error('Error initiating KYC:', error);
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
+
+  const handleFileUpload = async () => {
+    if (!selectedFile) {
+      alert('Please select a file first.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('document', selectedFile);
+
+    try {
+      const response = await fetch('http://localhost:3000/api/kyc/upload-document', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${userToken}`,
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        alert('Document uploaded successfully!');
+        setIsCreateWalletButtonVisible(true); // Show Create Wallet button if KYC document is approved
+        setIsFileUploadPromptVisible(false);
+        setSelectedFile(null);
+        fetchKycStatus(userToken); // Refresh KYC status
+      } else {
+        console.error('Failed to upload document, status code:', response.status);
+      }
+    } catch (error) {
+      console.error('Error uploading document:', error);
+    }
+  };
+
+  const handleCreateWallet = async () => {
+    const balance = prompt('Enter the initial balance for your wallet:');
+    if (balance && !isNaN(Number(balance))) {
+      setInitialBalance(Number(balance));
+
+      try {
+        const response = await fetch('http://localhost:3000/api/wallet/create', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${userToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ initialBalance: Number(balance) }),
+        });
+
+        if (response.ok) {
+          alert('Wallet created successfully!');
+          fetchBalance();
+          setIsCreateWalletButtonVisible(false); // Hide Create Wallet button
+          navigate('/dashboard'); // Navigate to HomeView to reload it
+        } else {
+          console.error('Failed to create wallet, status code:', response.status);
+        }
+      } catch (error) {
+        console.error('Error creating wallet:', error);
+      }
+    } else {
+      alert('Invalid balance. Please enter a valid number.');
+    }
+  };
+
+  const fetchBalance = async () => {
+    const apiUrl = `http://localhost:3000/api/wallet/balance`;
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${userToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert(`Current balance: ${data.balance}`);
+      } else {
+        console.error('Failed to fetch balance, status code:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching balance:', error);
     }
   };
 
@@ -138,6 +237,24 @@ function Dashboard({ onLogout }: DashboardProps) {
               onClick={initiateKyc}
             >
               Validate
+            </button>
+          )}
+          {/* File Upload Prompt */}
+          {isFileUploadPromptVisible && (
+            <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-800">
+              <input type="file" onChange={handleFileChange} />
+              <button onClick={handleFileUpload} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
+                Upload Document
+              </button>
+            </div>
+          )}
+          {/* Create Wallet Button */}
+          {isCreateWalletButtonVisible && (
+            <button
+              className="flex items-center w-full py-2 px-4 mt-4 bg-green-500 text-white hover:bg-green-600"
+              onClick={handleCreateWallet}
+            >
+              Create Wallet
             </button>
           )}
         </nav>
