@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bell, DollarSign, CreditCard } from 'lucide-react';
 
 interface Notification {
-  id: number;
+  id: string;
   type: 'alert' | 'transaction' | 'card';
   message: string;
   time: string;
@@ -10,14 +10,54 @@ interface Notification {
 
 interface NotificationsViewProps {
   darkMode: boolean;
+  userToken: string; // Add userToken for API authentication
 }
 
-function NotificationsView({ darkMode }: NotificationsViewProps) {
-  const [notifications, setNotifications] = useState<Notification[]>([
-    { id: 1, type: 'alert', message: 'Low balance in your checking account', time: '2 hours ago' },
-    { id: 2, type: 'transaction', message: 'You received $500 from John Doe', time: '1 day ago' },
-    { id: 3, type: 'card', message: 'Your new credit card has been shipped', time: '3 days ago' },
-  ]);
+function NotificationsView({ darkMode, userToken }: NotificationsViewProps) {
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const storedFirstName = localStorage.getItem('firstName') || 'John';
+  const storedLastName = localStorage.getItem('lastName') || 'Doe';
+
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      if (!userToken) {
+        console.error('User token is not available');
+        return;
+      }
+
+      const apiUrl = `http://localhost:3000/api/wallet/transactions`;
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${userToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const transactions = await response.json();
+          const transactionNotifications = transactions
+            .filter((txn: any) => txn.type === 'transfer') 
+            .map((txn: any) => ({
+              id: txn._id,
+              type: 'transaction',
+              message: `You received $${txn.amount} from ${storedFirstName} ${storedLastName}`,
+              time: new Date(txn.createdAt).toLocaleString(), // Format time as needed
+            }));
+          setNotifications(transactionNotifications);
+        } else {
+          console.error('Failed to fetch transactions, status code:', response.status);
+        }
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      }
+    };
+
+    fetchTransactions(); // Fetch transactions on component mount
+  }, [userToken]);
 
   const getIcon = (type: Notification['type']) => {
     switch (type) {

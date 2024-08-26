@@ -45,13 +45,61 @@ function HomeView({ darkMode, userToken }: HomeViewProps) {
     return () => clearInterval(intervalId); // Cleanup interval on unmount
   }, [userToken]);
 
-  const handleSendMoney = () => {
-    const amount = parseFloat(prompt("Enter amount to send:") || '');
-    if (amount > 0 && amount <= balance) {
-      setBalance(prevBalance => prevBalance - amount);
-      alert(`$${amount} sent successfully!`);
+  const handleAddFunds = async () => {
+    const amount = parseFloat(prompt("Enter amount to add:") || '');
+    if (amount > 0) {
+      try {
+        const response = await fetch('http://localhost:3000/api/wallet/deposit', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${userToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ amount }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setBalance(prevBalance => prevBalance + amount);
+          alert(`$${amount} added successfully!`);
+        } else {
+          console.error('Failed to add funds, status code:', response.status);
+        }
+      } catch (error) {
+        console.error('Error adding funds:', error);
+      }
     } else {
-      alert("Invalid amount or insufficient funds.");
+      alert("Invalid amount.");
+    }
+  };
+
+  const handleSendMoney = async () => {
+    const amount = parseFloat(prompt("Enter amount to send:") || '');
+    const toUserId = prompt("Enter recipient user ID:");
+
+    if (amount > 0 && amount <= balance && toUserId) {
+      try {
+        const response = await fetch('http://localhost:3000/api/wallet/transfer', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${userToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ toUserId, amount }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setBalance(prevBalance => prevBalance - amount);
+          alert(`$${amount} sent successfully to user ${toUserId}!`);
+        } else {
+          console.error('Failed to send money, status code:', response.status);
+        }
+      } catch (error) {
+        console.error('Error sending money:', error);
+      }
+    } else {
+      alert("Invalid amount, insufficient funds, or recipient user ID missing.");
     }
   };
 
@@ -59,16 +107,6 @@ function HomeView({ darkMode, userToken }: HomeViewProps) {
     const amount = parseFloat(prompt("Enter amount to request:") || '');
     if (amount > 0) {
       alert(`Request for $${amount} sent successfully!`);
-    } else {
-      alert("Invalid amount.");
-    }
-  };
-
-  const handleAddFunds = () => {
-    const amount = parseFloat(prompt("Enter amount to add:") || '');
-    if (amount > 0) {
-      setBalance(prevBalance => prevBalance + amount);
-      alert(`$${amount} added successfully!`);
     } else {
       alert("Invalid amount.");
     }

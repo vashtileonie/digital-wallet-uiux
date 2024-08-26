@@ -31,6 +31,9 @@ function Login({ onLogin }: LoginProps) {
         const data = await response.json();
         console.log('Login successful:', data);
         localStorage.setItem('userToken', data.token); 
+        localStorage.setItem('firstName', data.user.firstName);
+        localStorage.setItem('lastName', data.user.lastName);
+        localStorage.setItem('email', data.user.email);
         onLogin();
         navigate('/dashboard');
       } else {

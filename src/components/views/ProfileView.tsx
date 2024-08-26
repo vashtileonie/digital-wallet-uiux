@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, Mail, Phone } from 'lucide-react';
 
 interface Profile {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   phone: string;
 }
@@ -13,12 +14,26 @@ interface ProfileViewProps {
 
 function ProfileView({ darkMode }: ProfileViewProps) {
   const [profile, setProfile] = useState<Profile>({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
+    firstName: '',
+    lastName: '',
+    email: '',
     phone: '+1 (555) 123-4567',
   });
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  useEffect(() => {
+    const storedFirstName = localStorage.getItem('firstName') || 'John';
+    const storedLastName = localStorage.getItem('lastName') || 'Doe';
+    const storedEmail = localStorage.getItem('email') || 'john.doe@example.com';
+
+    setProfile({
+      firstName: storedFirstName,
+      lastName: storedLastName,
+      email: storedEmail,
+      phone: profile.phone,
+    });
+  }, []);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -35,7 +50,7 @@ function ProfileView({ darkMode }: ProfileViewProps) {
   };
 
   return (
-    <div className={`shadow overflow-hidden sm:rounded-lg mx-4 my-6 sm:mx-8 sm:my-8 `}>
+    <div className={`shadow overflow-hidden sm:rounded-lg mx-4 my-6 sm:mx-8 sm:my-8`}>
       <div className={`px-4 py-5 sm:px-6 ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
         <h3 className="text-lg leading-6 font-medium">User Profile</h3>
       </div>
@@ -49,13 +64,13 @@ function ProfileView({ darkMode }: ProfileViewProps) {
               {isEditing ? (
                 <input
                   type="text"
-                  name="name"
-                  value={profile.name}
+                  name="firstName"
+                  value={profile.firstName}
                   onChange={handleChange}
                   className={`w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'bg-white text-gray-900 border-gray-300'}`}
                 />
               ) : (
-                profile.name
+                `${profile.firstName} ${profile.lastName}`
               )}
             </dd>
           </div>

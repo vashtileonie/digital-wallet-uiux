@@ -289,7 +289,7 @@ function Dashboard({ onLogout }: DashboardProps) {
             <Route path="accounts" element={<AccountManagement darkMode={darkMode} />} />
             <Route path="transactions" element={<TransactionsView darkMode={darkMode} />} />
             <Route path="store-purchase" element={<StorePurchase darkMode={darkMode} />} />
-            <Route path="notifications" element={<NotificationsView darkMode={darkMode} />} />
+            <Route path="notifications" element={<NotificationsView darkMode={darkMode} userToken={userToken} />} />
             <Route path="profile" element={<ProfileView darkMode={darkMode} />} />
             <Route path="settings" element={<SettingsView darkMode={darkMode} toggleDarkMode={toggleDarkMode} />} />
           </Routes>
