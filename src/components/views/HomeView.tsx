@@ -61,7 +61,7 @@ function HomeView({ darkMode, userToken }: HomeViewProps) {
           });
   
           if (response.ok) {
-            const data = await response.json();
+           
             setBalance(prevBalance => prevBalance + amount);
             alert(`$${amount} deposited successfully using payment method ${paymentMethodId}!`);
             console.log('Funds deposited successfully');
@@ -96,7 +96,7 @@ function HomeView({ darkMode, userToken }: HomeViewProps) {
         });
 
         if (response.ok) {
-          const data = await response.json();
+      
           setBalance(prevBalance => prevBalance - amount);
           alert(`$${amount} sent successfully to user ${toUserId}!`);
         } else {
@@ -126,7 +126,7 @@ function HomeView({ darkMode, userToken }: HomeViewProps) {
   
         if (response.ok) {
           const data = await response.json();
-          const { clientSecret, paymentIntentId } = data;
+          const {paymentIntentId } = data;
           alert(`Payment of $${amount} initiated successfully!`);
   
           // Prompt for confirmation

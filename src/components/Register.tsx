@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-
 interface RegisterProps {
   onLogin: () => void;
 }
 
 function Register({ onLogin }: RegisterProps) {
-  const [name, setName] = useState<string>('');
+  const [firstName, setFirstName] = useState<string>('');
+  const [lastName, setLastName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [darkMode, setDarkMode] = useState<boolean>(false);
@@ -22,14 +22,14 @@ function Register({ onLogin }: RegisterProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ firstName, lastName, email, password }),
       });
   
       if (response.ok) {
         const data = await response.json();
         console.log('Registration successful:', data);
-        onLogin(); // Automatically log in the user after successful registration
-        navigate('/dashboard');
+        alert("User registered successfully. Please check your email to verify your account.");
+        navigate('/login');
       } else {
         const errorData = await response.json();
         console.log('Registration failed:', errorData.error);
@@ -40,22 +40,32 @@ function Register({ onLogin }: RegisterProps) {
       alert('An error occurred during registration. Please try again.');
     }
   };
-  
 
   return (
     <div className={`min-h-screen flex items-center justify-center p-4 ${darkMode ? 'bg-dark-gradient text-dark-mode' : 'bg-light-gradient text-light-mode'}`}>
       <div className={`w-full max-w-sm md:max-w-md lg:max-w-lg ${darkMode ? 'bg-card-dark-mode' : 'bg-card-light-mode'} p-6 md:p-8 rounded-lg shadow-md`}>
-      <h2 className="text-lg md:text-2xl font-bold">Get Started</h2>
-      <h1 className="text-base md:text-xl mb-4 italic">Register for DigiWallet</h1>
+        <h2 className="text-lg md:text-2xl font-bold">Get Started</h2>
+        <h1 className="text-base md:text-xl mb-4 italic">Register for DigiWallet</h1>
     
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium">Name</label>
+            <label htmlFor="firstName" className="block text-sm font-medium">First Name</label>
             <input
               type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              id="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+              className={`mt-1 block w-full border ${darkMode ? 'border-gray-600 bg-card-dark-mode text-dark-mode' : 'border-gray-300 bg-card-light-mode text-light-mode'} rounded-md shadow-sm p-2 md:p-3`}
+            />
+          </div>
+          <div>
+            <label htmlFor="lastName" className="block text-sm font-medium">Last Name</label>
+            <input
+              type="text"
+              id="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
               required
               className={`mt-1 block w-full border ${darkMode ? 'border-gray-600 bg-card-dark-mode text-dark-mode' : 'border-gray-300 bg-card-light-mode text-light-mode'} rounded-md shadow-sm p-2 md:p-3`}
             />

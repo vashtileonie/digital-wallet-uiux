@@ -24,7 +24,7 @@ function Dashboard({ onLogout }: DashboardProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isFileUploadPromptVisible, setIsFileUploadPromptVisible] = useState<boolean>(false);
   const [isCreateWalletButtonVisible, setIsCreateWalletButtonVisible] = useState<boolean>(false);
-  const [initialBalance, setInitialBalance] = useState<number | null>(null);
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -130,7 +130,7 @@ function Dashboard({ onLogout }: DashboardProps) {
   const handleCreateWallet = async () => {
     const balance = prompt('Enter the initial balance for your wallet:');
     if (balance && !isNaN(Number(balance))) {
-      setInitialBalance(Number(balance));
+      
 
       try {
         const response = await fetch('http://localhost:3000/api/wallet/create', {
@@ -233,30 +233,40 @@ function Dashboard({ onLogout }: DashboardProps) {
           {/* KYC Validation Button */}
           {kycStatus !== 'approved' && (
             <button
-              className="flex items-center w-full py-2 px-4 mt-4 bg-red-500 text-white hover:bg-red-600"
+              className="flex items-center justify-center w-full py-2 px-4 mt-4 rounded-md text-white bg-red-500 hover:bg-red-600 dark:bg-red-700 dark:hover:bg-red-600 transition-colors duration-300"
               onClick={initiateKyc}
             >
               Validate
             </button>
           )}
-          {/* File Upload Prompt */}
+
+         {/* File Upload Prompt */}
           {isFileUploadPromptVisible && (
-            <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-800">
-              <input type="file" onChange={handleFileChange} />
-              <button onClick={handleFileUpload} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
+            <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-md shadow-md">
+              <input 
+                type="file" 
+                onChange={handleFileChange} 
+                className="block w-full text-sm text-gray-700 dark:text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-gray-300 file:bg-gray-50 file:text-sm file:font-medium file:text-gray-700 dark:file:border-gray-600 dark:file:bg-gray-700 dark:file:text-gray-300"
+              />
+              <button 
+                onClick={handleFileUpload} 
+                className="mt-2 w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-300"
+              >
                 Upload Document
               </button>
             </div>
           )}
-          {/* Create Wallet Button */}
+
+         {/* Create Wallet Button */}
           {isCreateWalletButtonVisible && (
             <button
-              className="flex items-center w-full py-2 px-4 mt-4 bg-green-500 text-white hover:bg-green-600"
+              className="flex items-center justify-center w-full py-2 px-4 mt-4 rounded-md text-white bg-green-500 hover:bg-green-600 dark:bg-green-700 dark:hover:bg-green-600 transition-colors duration-300"
               onClick={handleCreateWallet}
             >
               Create Wallet
             </button>
           )}
+
         </nav>
         <div className="absolute bottom-0 w-64 p-4">
           <button className="flex items-center text-gray-600 hover:text-red-500 mt-6" onClick={onLogout}>

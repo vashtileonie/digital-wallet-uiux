@@ -10,14 +10,11 @@ interface Notification {
 
 interface NotificationsViewProps {
   darkMode: boolean;
-  userToken: string; // Add userToken for API authentication
+  userToken: string; 
 }
 
 function NotificationsView({ darkMode, userToken }: NotificationsViewProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const storedFirstName = localStorage.getItem('firstName') || 'John';
-  const storedLastName = localStorage.getItem('lastName') || 'Doe';
-
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -40,12 +37,12 @@ function NotificationsView({ darkMode, userToken }: NotificationsViewProps) {
         if (response.ok) {
           const transactions = await response.json();
           const transactionNotifications = transactions
-            .filter((txn: any) => txn.type === 'transfer') 
+            .filter((txn: any) => txn.type === 'transfer')
             .map((txn: any) => ({
               id: txn._id,
               type: 'transaction',
-              message: `You received $${txn.amount} from ${storedFirstName} ${storedLastName}`,
-              time: new Date(txn.createdAt).toLocaleString(), // Format time as needed
+              message: `Transaction of $${txn.amount} from user '${txn.fromWallet}' to user '${txn.toWallet}'`,
+              time: new Date(txn.createdAt).toLocaleString(),
             }));
           setNotifications(transactionNotifications);
         } else {
