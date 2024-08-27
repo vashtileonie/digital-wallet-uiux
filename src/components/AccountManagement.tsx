@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { PlusCircle, Trash2 } from "lucide-react";
 
 interface Account {
@@ -6,12 +6,6 @@ interface Account {
   type: "Checking" | "Savings";
   name: string;
   balance: number;
-}
-
-interface LinkedBank {
-  id: number;
-  name: string;
-  accountNumber: string;
 }
 
 interface PaymentMethod {
@@ -23,29 +17,90 @@ interface PaymentMethod {
 
 interface AccountManagementProps {
   darkMode: boolean;
+  userToken: string | null;
 }
 
-const AccountManagement = ({ darkMode }: AccountManagementProps) => {
+const AccountManagement = ({ darkMode, userToken }: AccountManagementProps) => {
   const [accounts, setAccounts] = useState<Account[]>([
-    { id: 1, type: "Checking", name: "Main Checking", balance: 5000 },
-    { id: 2, type: "Savings", name: "Emergency Fund", balance: 10000 },
+    { id: 1, type: "Savings", name: "Debit", balance: 0 },
   ]);
 
-  const [linkedBanks, setLinkedBanks] = useState<LinkedBank[]>([
-    { id: 1, name: "Bank of America", accountNumber: "****1234" },
-  ]);
-
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
-    { id: 1, type: "Credit Card", last4: "5678", expiryDate: "12/24" },
-  ]);
-
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [newAccountName, setNewAccountName] = useState<string>("");
   const [newAccountType, setNewAccountType] = useState<"Checking" | "Savings">("Checking");
-  const [newBankName, setNewBankName] = useState<string>("");
-  const [newBankAccountNumber, setNewBankAccountNumber] = useState<string>("");
-  const [newCardNumber, setNewCardNumber] = useState<string>("");
-  const [newCardExpiry, setNewCardExpiry] = useState<string>("");
-  const [newCardCVV, setNewCardCVV] = useState<string>("");
+  const [newPaymentMethodId, setNewPaymentMethodId] = useState<string>("");
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      if (!userToken) {
+        console.error("No user token found");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:3000/api/wallet/balance", {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setAccounts((prevAccounts) =>
+            prevAccounts.map((account) =>
+              account.id === 1 ? { ...account, balance: data.balance } : account
+            )
+          );
+        } else {
+          console.error("Failed to fetch balance:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching balance:", error);
+      }
+    };
+
+    fetchBalance();
+  }, [userToken]);
+
+  useEffect(() => {
+    const fetchPaymentMethods = async () => {
+      if (!userToken) {
+        console.error("No user token found");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:3000/api/wallet/payment-methods", {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Fetched payment methods:", data);
+
+          const methods: PaymentMethod[] = Array.isArray(data)
+            ? data.map((method: any) => ({
+                id: method.id,
+                type: method.card.brand, 
+                last4: method.card.last4,
+                expiryDate: `${method.card.expMonth}/${method.card.expYear}`,
+              }))
+            : [];
+
+          setPaymentMethods(methods);
+        } else {
+          console.error("Failed to fetch payment methods:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching payment methods:", error);
+      }
+    };
+
+    fetchPaymentMethods();
+  }, [userToken]);
 
   const handleAddAccount = (e: FormEvent) => {
     e.preventDefault();
@@ -64,37 +119,72 @@ const AccountManagement = ({ darkMode }: AccountManagementProps) => {
     }
   };
 
-  const handleLinkBank = (e: FormEvent) => {
+  const handleAddPaymentMethod = async (e: FormEvent) => {
     e.preventDefault();
-    if (newBankName && newBankAccountNumber) {
-      setLinkedBanks([
-        ...linkedBanks,
-        {
-          id: linkedBanks.length + 1,
-          name: newBankName,
-          accountNumber: `****${newBankAccountNumber.slice(-4)}`,
-        },
-      ]);
-      setNewBankName("");
-      setNewBankAccountNumber("");
-    }
-  };
+    if (newPaymentMethodId) {
+      if (!userToken) {
+        console.error("No user token found");
+        return;
+      }
 
-  const handleAddPaymentMethod = (e: FormEvent) => {
-    e.preventDefault();
-    if (newCardNumber && newCardExpiry && newCardCVV) {
-      setPaymentMethods([
-        ...paymentMethods,
-        {
-          id: paymentMethods.length + 1,
-          type: "Credit Card",
-          last4: newCardNumber.slice(-4),
-          expiryDate: newCardExpiry,
-        },
-      ]);
-      setNewCardNumber("");
-      setNewCardExpiry("");
-      setNewCardCVV("");
+      try {
+        const response = await fetch("http://localhost:3000/api/wallet/add-payment-method", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken}`,
+          },
+          body: JSON.stringify({
+            paymentMethodId: newPaymentMethodId,
+          }),
+        });
+
+        if (response.ok) {
+          alert("Payment method added successfully");
+          setNewPaymentMethodId("");// Clear the input field
+          // Reload payment methods
+          const fetchPaymentMethods = async () => {
+            try {
+              const response = await fetch("http://localhost:3000/api/wallet/payment-methods", {
+                headers: {
+                  Authorization: `Bearer ${userToken}`,
+                  'Content-Type': 'application/json',
+                },
+              });
+
+              if (response.ok) {
+                const data = await response.json();
+                console.log("Fetched payment methods:", data); 
+
+                const methods: PaymentMethod[] = Array.isArray(data.paymentMethods)
+                  ? data.paymentMethods.map((method: any) => ({
+                      id: method.id,
+                      type: "Credit Card",
+                      last4: method.last4,
+                      expiryDate: method.expiryDate,
+                    }))
+                  : [];
+                  if (methods.length === 0) {
+                    console.warn("No payment methods found after adding the new method.");
+                }
+                setPaymentMethods(methods);
+              } else {
+                console.error("Failed to fetch payment methods:", response.statusText);
+              }
+            } catch (error) {
+              console.error("Error fetching payment methods:", error);
+            }
+          };
+          await fetchPaymentMethods();
+        } else {
+          const errorData = await response.json();
+            console.error("Failed to add payment method:", errorData.message);
+            alert(errorData.message); 
+        }
+      } catch (error) {
+        console.error("Error adding payment method:", error);
+        alert("There was an error adding the payment method. Please try again.");
+      }
     }
   };
 
@@ -102,16 +192,46 @@ const AccountManagement = ({ darkMode }: AccountManagementProps) => {
     setAccounts(accounts.filter((account) => account.id !== id));
   };
 
-  const handleRemoveBank = (id: number) => {
-    setLinkedBanks(linkedBanks.filter((bank) => bank.id !== id));
-  };
+  const handleRemovePaymentMethod = async (id: number) => {
+    if (!userToken) {
+        console.error("No user token found");
+        return;
+    }
 
-  const handleRemovePaymentMethod = (id: number) => {
-    setPaymentMethods(paymentMethods.filter((method) => method.id !== id));
-  };
+    try {
+        const response = await fetch(`http://localhost:3000/api/wallet/payment-methods/${id}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${userToken}`,
+            },
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+
+            if (data.success) {
+                // Update the frontend by removing the method
+                setPaymentMethods(paymentMethods.filter((method) => method.id !== id));
+                alert("Payment method removed successfully.");
+            } else {
+                console.error("Failed to remove payment method:", data.message || "Unknown error");
+                alert(data.message || "Failed to remove payment method.");
+            }
+        } else {
+            const errorData = await response.json();
+            console.error("Failed to remove payment method:", errorData.message || response.statusText);
+            alert(errorData.message || "Failed to remove payment method.");
+        }
+    } catch (error) {
+        console.error("Error removing payment method:", error);
+        alert("There was an error removing the payment method. Please try again.");
+    }
+};
+
+
 
   return (
-    <div className={`space-y-6 p-4 sm:p-6 lg:p-8`}>
+    <div className="space-y-6 p-4 sm:p-6 lg:p-8">
       <div className={`shadow overflow-hidden sm:rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
         <div className="px-4 py-5 sm:px-6">
           <h3 className={`text-lg leading-6 font-medium ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
@@ -164,14 +284,14 @@ const AccountManagement = ({ darkMode }: AccountManagementProps) => {
               onChange={(e: ChangeEvent<HTMLSelectElement>) =>
                 setNewAccountType(e.target.value as "Checking" | "Savings")
               }
-              className={`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
+              className={`mt-1 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'}`}
             >
-              <option value="Checking">Checking</option>
-              <option value="Savings">Savings</option>
+              <option>Checking</option>
+              <option>Savings</option>
             </select>
             <button
               type="submit"
-              className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${darkMode ? 'text-gray-900 bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500' : 'text-white bg-indigo-600 hover:bg-indigo-700'} focus:outline-none focus:ring-2 focus:ring-offset-2`}
+              className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white ${darkMode ? 'bg-indigo-600 hover:bg-indigo-500 focus:ring-indigo-500' : 'bg-indigo-600 hover:bg-indigo-500 focus:ring-indigo-500'} focus:outline-none focus:ring-2 focus:ring-offset-2`}
             >
               <PlusCircle size={18} className="mr-2" />
               Add Account
@@ -179,69 +299,6 @@ const AccountManagement = ({ darkMode }: AccountManagementProps) => {
           </form>
         </div>
       </div>
-
-      <div className={`shadow overflow-hidden sm:rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-        <div className="px-4 py-5 sm:px-6">
-          <h3 className={`text-lg leading-6 font-medium ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
-            Linked Bank Accounts
-          </h3>
-        </div>
-        <div className={`border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-          <ul className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
-            {linkedBanks.map((bank) => (
-              <li key={bank.id} className={`px-4 py-4 sm:px-6 ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-900'}`}>
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between">
-                  <div className="flex-grow">
-                    <p className={`text-sm font-medium ${darkMode ? 'text-indigo-400' : 'text-indigo-600'} truncate`}>
-                      {bank.name}
-                    </p>
-                    <p className="text-sm">{bank.accountNumber}</p>
-                  </div>
-                  <button
-                    onClick={() => handleRemoveBank(bank.id)}
-                    className={`ml-2 ${darkMode ? 'text-red-400 hover:text-red-300' : 'text-red-600 hover:text-red-900'}`}
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="px-4 py-4 sm:px-6">
-          <form
-            onSubmit={handleLinkBank}
-            className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2"
-          >
-            <input
-              type="text"
-              value={newBankName}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setNewBankName(e.target.value)
-              }
-              placeholder="Bank Name"
-              className={`flex-grow shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
-            />
-            <input
-              type="text"
-              value={newBankAccountNumber}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setNewBankAccountNumber(e.target.value)
-              }
-              placeholder="Account Number"
-              className={`flex-grow shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
-            />
-            <button
-              type="submit"
-              className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${darkMode ? 'text-gray-900 bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500' : 'text-white bg-indigo-600 hover:bg-indigo-700'} focus:outline-none focus:ring-2 focus:ring-offset-2`}
-            >
-              <PlusCircle size={18} className="mr-2" />
-              Link Bank
-            </button>
-          </form>
-        </div>
-      </div>
-
       <div className={`shadow overflow-hidden sm:rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
         <div className="px-4 py-5 sm:px-6">
           <h3 className={`text-lg leading-6 font-medium ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
@@ -255,10 +312,9 @@ const AccountManagement = ({ darkMode }: AccountManagementProps) => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between">
                   <div className="flex-grow">
                     <p className={`text-sm font-medium ${darkMode ? 'text-indigo-400' : 'text-indigo-600'} truncate`}>
-                      {method.type}
+                      {method.type} ending in {method.last4}
                     </p>
-                    <p className="text-sm">**** **** **** {method.last4}</p>
-                    <p className="text-sm">{method.expiryDate}</p>
+                    <p className="text-sm">Expires {method.expiryDate}</p>
                   </div>
                   <button
                     onClick={() => handleRemovePaymentMethod(method.id)}
@@ -272,42 +328,23 @@ const AccountManagement = ({ darkMode }: AccountManagementProps) => {
           </ul>
         </div>
         <div className="px-4 py-4 sm:px-6">
-          <form
+         <form
             onSubmit={handleAddPaymentMethod}
-            className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2"
+            className="flex items-center space-x-2"
           >
             <input
               type="text"
-              value={newCardNumber}
+              value={newPaymentMethodId}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setNewCardNumber(e.target.value)
+                setNewPaymentMethodId(e.target.value)
               }
-              placeholder="Card Number"
-              className={`flex-grow shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
-            />
-            <input
-              type="text"
-              value={newCardExpiry}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setNewCardExpiry(e.target.value)
-              }
-              placeholder="MM/YY"
-              className={`flex-grow shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
-            />
-            <input
-              type="text"
-              value={newCardCVV}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setNewCardCVV(e.target.value)
-              }
-              placeholder="CVV"
-              className={`flex-grow shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
+              placeholder="Payment Method ID"
+              className={`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'border-gray-300'} rounded-md`}
             />
             <button
               type="submit"
-              className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${darkMode ? 'text-gray-900 bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500' : 'text-white bg-indigo-600 hover:bg-indigo-700'} focus:outline-none focus:ring-2 focus:ring-offset-2`}
+              className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm ${darkMode ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'bg-indigo-500 text-white hover:bg-indigo-600'}`}
             >
-              <PlusCircle size={18} className="mr-2" />
               Add Payment Method
             </button>
           </form>

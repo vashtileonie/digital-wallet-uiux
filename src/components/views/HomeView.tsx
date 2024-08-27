@@ -48,30 +48,37 @@ function HomeView({ darkMode, userToken }: HomeViewProps) {
   const handleAddFunds = async () => {
     const amount = parseFloat(prompt("Enter amount to add:") || '');
     if (amount > 0) {
-      try {
-        const response = await fetch('http://localhost:3000/api/wallet/deposit', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${userToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ amount }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setBalance(prevBalance => prevBalance + amount);
-          alert(`$${amount} added successfully!`);
-        } else {
-          console.error('Failed to add funds, status code:', response.status);
+      const paymentMethodId = prompt("Enter payment method ID (e.g., pm_card_mastercard):");
+      if (paymentMethodId) {
+        try {
+          const response = await fetch('http://localhost:3000/api/wallet/deposit', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${userToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ amount, paymentMethodId }),
+          });
+  
+          if (response.ok) {
+            const data = await response.json();
+            setBalance(prevBalance => prevBalance + amount);
+            alert(`$${amount} deposited successfully using payment method ${paymentMethodId}!`);
+            console.log('Funds deposited successfully');
+          } else {
+            console.error('Failed to add funds, status code:', response.status);
+          }
+        } catch (error) {
+          console.error('Error adding funds:', error);
         }
-      } catch (error) {
-        console.error('Error adding funds:', error);
+      } else {
+        alert("Payment method ID is required.");
       }
     } else {
       alert("Invalid amount.");
     }
   };
+  
 
   const handleSendMoney = async () => {
     const amount = parseFloat(prompt("Enter amount to send:") || '');
@@ -103,15 +110,64 @@ function HomeView({ darkMode, userToken }: HomeViewProps) {
     }
   };
 
-  const handleRequestMoney = () => {
-    const amount = parseFloat(prompt("Enter amount to request:") || '');
+  const handlePayNow = async () => {
+    const amount = parseFloat(prompt("Enter amount to pay:") || '');
     if (amount > 0) {
-      alert(`Request for $${amount} sent successfully!`);
+      try {
+        // Initiate the payment intent
+        const response = await fetch('http://localhost:3000/api/wallet/create-payment-intent', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${userToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ amount }),
+        });
+  
+        if (response.ok) {
+          const data = await response.json();
+          const { clientSecret, paymentIntentId } = data;
+          alert(`Payment of $${amount} initiated successfully!`);
+  
+          // Prompt for confirmation
+          const paymentMethodId = prompt("Enter payment method ID (e.g., pm_card_mastercard):");
+          if (paymentMethodId) {
+            // Confirm the payment intent
+            const confirmResponse = await fetch('http://localhost:3000/api/wallet/confirm-payment-intent', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${userToken}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ paymentIntentId, paymentMethodId }),
+            });
+  
+            if (confirmResponse.ok) {
+              alert(`Payment of $${amount} confirmed successfully!`);
+              setBalance(prevBalance => prevBalance - amount);
+            } else {
+              const errorData = await confirmResponse.json();
+              console.error('Failed to confirm payment, status code:', confirmResponse.status, 'Error:', errorData);
+              alert('Failed to confirm payment. Please check your payment details and try again.');
+            }
+          } else {
+            alert("Payment method ID is required.");
+          }
+        } else {
+          const errorData = await response.json();
+          console.error('Failed to initiate payment, status code:', response.status, 'Error:', errorData);
+          alert('Failed to initiate payment. Please try again later.');
+        }
+      } catch (error) {
+        console.error('Error initiating payment:', error);
+      }
     } else {
       alert("Invalid amount.");
     }
   };
-
+  
+  
+  
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 sm:p-6">
       <div className={`${darkMode ? 'bg-card-dark-gradient text-light-mode' : 'bg-card-light-gradient text-dark-mode'} shadow-lg rounded-lg p-4 sm:p-6 relative`}>
@@ -121,7 +177,7 @@ function HomeView({ darkMode, userToken }: HomeViewProps) {
         </div>
         <div className="flex justify-end items-center">
           <div className="absolute bottom-4 right-4 text-right italic">
-            <p className={`${darkMode ? 'text-grey-600' : 'text-grey-200'} text-sm`}>Visa Card</p>
+            <p className={`${darkMode ? 'text-grey-600' : 'text-grey-200'} text-sm`}>Card</p>
           </div>
         </div>
       </div>
@@ -133,9 +189,9 @@ function HomeView({ darkMode, userToken }: HomeViewProps) {
               <ArrowUpRight className="mr-2" size={18} />
               Send Money
             </button>
-            <button onClick={handleRequestMoney} className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200 flex items-center justify-center">
+            <button onClick={handlePayNow} className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200 flex items-center justify-center">
               <ArrowDownLeft className="mr-2" size={18} />
-              Request Money
+              Pay Now
             </button>
             <button onClick={handleAddFunds} className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200 flex items-center justify-center">
               <Wallet className="mr-2" size={18} />
