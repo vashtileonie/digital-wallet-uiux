@@ -67,6 +67,7 @@ function HomeView({ darkMode, userToken }: HomeViewProps) {
             console.log('Funds deposited successfully');
           } else {
             console.error('Failed to add funds, status code:', response.status);
+            alert(`Failed to add funds. Try again`);
           }
         } catch (error) {
           console.error('Error adding funds:', error);
